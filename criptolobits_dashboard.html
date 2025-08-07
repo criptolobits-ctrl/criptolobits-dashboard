@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CriptoLobits - Dashboard Público</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d47 100%);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        .hero-header {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d47 50%, #2d1b69 100%);
+            padding: 80px 0 120px;
+            text-align: center;
+        }
+        .hero-logo {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-size: 24px;
+            color: #8892b0;
+            margin-bottom: 30px;
+        }
+        .live-stats {
+            background: #060818;
+            padding: 40px 0;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+        }
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 212, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 212, 255, 0.1);
+        }
+        .crypto-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+        .stat-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .stat-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .positive { color: #00ff88; }
+        .negative { color: #ff6b6b; }
+        .analysis-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .analysis-card {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+        .manada-status {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="hero-header">
+        <h1 class="hero-logo">🐺 CriptoLobits</h1>
+        <p class="hero-tagline">Datos, Decisiones y Dinero en la era crypto</p>
+    </header>
+
+    <section class="live-stats">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="crypto-name">🟢 Bitcoin</div>
+                <div class="stat-price" id="btc-price">$114,481</div>
+                <div class="stat-change positive" id="btc-change">+9.9%</div>
+            </div>
+            <div class="stat-item">
+                <div class="crypto-name">🟢 Ethereum</div>
+                <div class="stat-price" id="eth-price">$3,654</div>
+                <div class="stat-change positive" id="eth-change">+2.1%</div>
+            </div>
+            <div class="stat-item">
+                <div class="crypto-name">🟢 Solana</div>
+                <div class="stat-price" id="sol-price">$167</div>
+                <div class="stat-change positive" id="sol-change">+3.2%</div>
+            </div>
+            <div class="stat-item">
+                <div class="crypto-name">🐺 CriptoLobits</div>
+                <div class="stat-price">85%</div>
+                <div class="stat-change positive">Confianza</div>
+            </div>
+        </div>
+    </section>
+
+    <main class="analysis-section">
+        <h2 class="section-title">Análisis de la Manada</h2>
+        
+        <div class="analysis-card">
+            <h3 class="card-title">🚀 Comportamiento Actual</h3>
+            <div class="manada-status">MANADA EN MODO CAZA AGRESIVA</div>
+            <p>Los datos confluyen de manera extraordinaria. Bitcoin +9.9% con volumen institucional confirma que este no es ruido retail - hay información que la manada está procesando antes que el mercado general.</p>
+        </div>
+
+        <div class="analysis-card">
+            <h3 class="card-title">📊 Análisis Técnico</h3>
+            <p><strong>Momentum promedio:</strong> +5.1% (Fuertemente alcista)</p>
+            <p><strong>Volumen total:</strong> $95.3B (Actividad institucional alta)</p>
+            <p><strong>Confluencias:</strong> Todas las métricas alineadas hacia el alza</p>
+        </div>
+
+        <div class="analysis-card">
+            <h3 class="card-title">💭 Insight CriptoLobits</h3>
+            <p><em>"En 15 años analizando mercados, he aprendido que cuando Bitcoin se mueve +9% con este volumen, algo fundamental está cambiando. Los lobos no cazamos por FOMO - cazamos porque los datos confirman oportunidades reales. Este tipo de confluencias suelen extenderse 24-48 horas antes de la próxima consolidación."</em></p>
+        </div>
+
+        <div class="analysis-card">
+            <h3 class="card-title">🎯 Datos, Decisiones y Dinero</h3>
+            <p><strong>📊 DATOS:</strong> Confirman oportunidad clara con múltiples confluencias</p>
+            <p><strong>🎯 DECISIÓN:</strong> Posicionarse estratégicamente aprovechando momentum</p>
+            <p><strong>💰 DINERO:</strong> Momento de actuar con confianza - la manada está cazando</p>
+        </div>
+    </main>
+
+    <script>
+        // Actualización en tiempo real
+        async function updatePrices() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd&include_24hr_change=true');
+                const data = await response.json();
+                
+                if (data.bitcoin) {
+                    document.getElementById('btc-price').textContent = `$${data.bitcoin.usd.toLocaleString()}`;
+                    const btcChange = data.bitcoin.usd_24h_change;
+                    document.getElementById('btc-change').textContent = `${btcChange > 0 ? '+' : ''}${btcChange.toFixed(1)}%`;
+                }
+                
+                console.log('🐺 CriptoLobits: Precios actualizados');
+            } catch (error) {
+                console.log('⚠️ Error actualizando precios:', error);
+            }
+        }
+
+        // Actualizar cada 30 segundos
+        setInterval(updatePrices, 30000);
+        
+        // Actualizar al cargar
+        updatePrices();
+        
+        console.log('🐺 CriptoLobits Dashboard Loaded!');
+        console.log('📊 Datos en tiempo real activos');
+        console.log('🎯 La manada está cazando oportunidades...');
+    </script>
+</body>
+</html>

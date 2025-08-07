@@ -406,8 +406,8 @@
             <div class="config-title">
                 ⚡ Configuración GLM-4.5
             </div>
-            <input type="password" class="api-input" id="glmApiKey" placeholder="Ingresa tu API Key de GLM-4.5...">
-            <button onclick="testGLMConnection()" class="config-btn">Probar Conexión</button>
+            <input type="password" class="api-input" id="glmApiKey" placeholder="Ingresa tu API Key de GLM-4.5..." onkeypress="handleKeyPress(event)">
+            <button onclick="testGLMConnection()" class="config-btn" id="testBtn">🔗 Probar Conexión</button>
             
             <div class="api-status">
                 <div class="ai-status">
@@ -469,7 +469,7 @@
             glm: {
                 endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
                 model: 'glm-4-flash',
-                apiKey: null
+                apiKey: 'TU_API_KEY_AQUI' // Reemplaza con tu API key real
             }
         };
 
@@ -504,22 +504,40 @@
             }
         };
 
+        // Función para manejar Enter en el campo de API key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                testGLMConnection();
+            }
+        }
+
         // Función para probar conexión GLM-4.5
         async function testGLMConnection() {
-            const apiKey = document.getElementById('glmApiKey').value;
+            const apiKey = document.getElementById('glmApiKey').value.trim();
             const statusDot = document.getElementById('glm-status');
             const statusText = document.getElementById('glm-status-text');
+            const testBtn = document.getElementById('testBtn');
+            
+            console.log('Iniciando prueba de conexión GLM-4.5...'); // Debug
             
             if (!apiKey) {
                 alert('Por favor ingresa tu API Key de GLM-4.5');
+                console.log('Error: API Key vacía'); // Debug
                 return;
             }
+            
+            console.log('API Key recibida, length:', apiKey.length); // Debug
+            
+            // Deshabilitar botón durante la prueba
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Probando...';
             
             statusDot.className = 'status-dot status-testing';
             statusText.textContent = 'Probando...';
             
             try {
                 // Simular prueba de conexión
+                console.log('Simulando conexión...'); // Debug
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 // En implementación real, aquí haríamos la llamada a GLM-4.5
@@ -530,15 +548,31 @@
                     statusText.textContent = 'Conectado';
                     API_CONFIG.glm.apiKey = apiKey;
                     
+                    // Habilitar botón con éxito
+                    testBtn.disabled = false;
+                    testBtn.textContent = '✅ Conectado';
+                    testBtn.style.background = 'linear-gradient(45deg, #4caf50, #8bc34a)';
+                    
+                    console.log('Conexión exitosa, inicializando tri-AI...'); // Debug
+                    
                     // Inicializar análisis tri-AI
                     initializeTriAI();
+                    
+                    alert('✅ GLM-4.5 conectado exitosamente!\n🤖 Sistema tri-AI activado');
                 } else {
                     throw new Error('Conexión fallida');
                 }
             } catch (error) {
                 statusDot.className = 'status-dot status-disconnected';
                 statusText.textContent = 'Error de conexión';
-                alert('Error al conectar con GLM-4.5: ' + error.message);
+                
+                // Restaurar botón en caso de error
+                testBtn.disabled = false;
+                testBtn.textContent = '🔗 Probar Conexión';
+                testBtn.style.background = '';
+                
+                console.error('Error al conectar con GLM-4.5:', error); // Debug
+                alert('❌ Error al conectar con GLM-4.5: ' + error.message + '\n\n💡 Verifica que tu API key sea correcta');
             }
         }
 
@@ -692,8 +726,8 @@
         // Inicializar con datos simulados al cargar la página
         window.addEventListener('load', () => {
             setTimeout(() => {
-                // Mostrar mensaje de configuración si GLM no está configurado
-                if (!API_CONFIG.glm.apiKey) {
+                // Verificar si GLM está configurado
+                if (!API_CONFIG.glm.apiKey || API_CONFIG.glm.apiKey === 'TU_API_KEY_AQUI') {
                     const grid = document.getElementById('cryptoGrid');
                     grid.innerHTML = `
                         <div class="alert" style="grid-column: 1 / -1;">
@@ -706,6 +740,11 @@
                     
                     // Mostrar análisis dual-AI reducido
                     displayDualAIFallback();
+                } else {
+                    // Auto-inicializar tri-AI si la API key ya está configurada
+                    document.getElementById('glm-status').className = 'status-dot status-connected';
+                    document.getElementById('glm-status-text').textContent = 'Conectado';
+                    initializeTriAI();
                 }
             }, 1000);
         });

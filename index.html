@@ -244,6 +244,28 @@
             box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
         }
         
+        /* Custom Token Input */
+        .custom-token-input {
+            background-color: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            width: 140px;
+            transition: all 0.2s;
+        }
+        
+        .custom-token-input:focus {
+            outline: none;
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+        
+        .custom-token-input::placeholder {
+            color: #9ca3af;
+        }
+        
         /* Charts */
         .chart-canvas {
             max-height: 300px;
@@ -768,7 +790,7 @@
             <div class="chart-container">
                 <div class="chart-header">
                     <h3 class="chart-title">📈 Social Volume Evolution</h3>
-                    <div style="display: flex; gap: 1rem; align-items: center;">
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; position: relative;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
                             <span style="font-size: 0.875rem; color: #9ca3af;">Comparar con:</span>
                             <select id="tokenSelector" onchange="updateTokenChart()" class="token-selector">
@@ -779,7 +801,21 @@
                                 <option value="DOT">Polkadot (DOT)</option>
                                 <option value="AVAX">Avalanche (AVAX)</option>
                                 <option value="UNI">Uniswap (UNI)</option>
+                                <option value="CUSTOM">🔧 Personalizado...</option>
                             </select>
+                            <input 
+                                type="text" 
+                                id="customTokenInput" 
+                                placeholder="Ej: NEAR, FTM, ATOM..." 
+                                maxlength="8"
+                                class="custom-token-input"
+                                style="display: none;"
+                                onkeypress="handleCustomTokenInput(event)"
+                                onblur="validateCustomToken()"
+                            />
+                            <div id="customTokenHelper" style="display: none; font-size: 0.65rem; color: #9ca3af; margin-top: 0.25rem; position: absolute; top: 100%; left: 0; white-space: nowrap; z-index: 10;">
+                                💡 Ingresa símbolo del token (2-8 caracteres) y presiona Enter
+                            </div>
                         </div>
                         <div class="time-filter">
                             <button class="filter-btn" onclick="updateTimeframe('1D')">1D</button>
@@ -1193,7 +1229,7 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-left">
-                <span>✅ Bloque 1: Social + OnChain + News + Analytics Personalizable</span>
+                <span>✅ Bloque 1: Social + OnChain + News + Analytics + Tokens Personalizados</span>
                 <span>⏳ Bloque 2: Macro + Trading (Pendiente)</span>
                 <span>⏳ Bloque 3: Top 5 + Anti-Rugpull (Pendiente)</span>
             </div>
@@ -1279,10 +1315,117 @@
             }
         }
 
+        // Función para manejar input de token personalizado
+        function handleCustomTokenInput(event) {
+            if (event.key === 'Enter') {
+                validateCustomToken();
+            }
+        }
+
+        // Función para validar token personalizado
+        function validateCustomToken() {
+            const input = document.getElementById('customTokenInput');
+            const helper = document.getElementById('customTokenHelper');
+            const selector = document.getElementById('tokenSelector');
+            const tokenSymbol = input.value.trim().toUpperCase();
+            
+            if (tokenSymbol && tokenSymbol.length >= 2 && tokenSymbol.length <= 8) {
+                // Crear datos para el token personalizado si no existe
+                if (!tokenData[tokenSymbol]) {
+                    tokenData[tokenSymbol] = generateCustomTokenData(tokenSymbol);
+                }
+                
+                selectedToken = tokenSymbol;
+                
+                // Ocultar input y helper
+                input.style.display = 'none';
+                helper.style.display = 'none';
+                input.value = '';
+                
+                // Agregar opción al selector si no existe
+                let optionExists = false;
+                for (let option of selector.options) {
+                    if (option.value === tokenSymbol) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+                
+                if (!optionExists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = tokenSymbol;
+                    newOption.textContent = `${tokenSymbol} (Personalizado)`;
+                    // Insertar antes de la opción "Personalizado"
+                    selector.insertBefore(newOption, selector.lastElementChild);
+                }
+                
+                // Seleccionar el nuevo token
+                selector.value = tokenSymbol;
+                
+                updateTokenChart();
+                showTokenChangeNotification(`✅ Token ${tokenSymbol} agregado y activado`);
+            } else if (tokenSymbol.length > 0) {
+                showTokenChangeNotification(`❌ Token inválido: debe tener 2-8 caracteres`);
+                input.value = '';
+                input.focus();
+            } else {
+                // Si está vacío, volver al token anterior
+                helper.style.display = 'none';
+                input.style.display = 'none';
+                selector.value = selectedToken;
+            }
+        }
+
+        // Función para generar datos dinámicos para tokens personalizados
+        function generateCustomTokenData(symbol) {
+            // Generar datos semi-aleatorios pero consistentes basados en el símbolo
+            const hash = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const baseValue = 300 + (hash % 800); // Base entre 300-1100
+            
+            // Generar colores únicos basados en el hash
+            const colors = [
+                '#e11d48', '#dc2626', '#ea580c', '#d97706', '#ca8a04',
+                '#65a30d', '#16a34a', '#059669', '#0891b2', '#0284c7',
+                '#2563eb', '#4f46e5', '#7c3aed', '#a21caf', '#be185d'
+            ];
+            const color = colors[hash % colors.length];
+            
+            return {
+                name: symbol,
+                data: Array.from({length: 7}, (_, i) => {
+                    const variation = (Math.sin((hash + i) * 0.5) * 100) + baseValue;
+                    return Math.floor(Math.max(200, variation));
+                }),
+                color: color,
+                sentiment: Math.max(45, Math.min(85, 60 + (hash % 25)))
+            };
+        }
+
         // Función para actualizar el token seleccionado
         function updateTokenChart() {
-            selectedToken = document.getElementById('tokenSelector').value;
+            const selector = document.getElementById('tokenSelector');
+            const customInput = document.getElementById('customTokenInput');
+            const helper = document.getElementById('customTokenHelper');
+            
+            if (selector.value === 'CUSTOM') {
+                // Mostrar input personalizado y helper
+                customInput.style.display = 'block';
+                helper.style.display = 'block';
+                customInput.focus();
+                return; // No actualizar gráficas hasta que se ingrese un token válido
+            } else {
+                // Ocultar input personalizado y helper
+                customInput.style.display = 'none';
+                helper.style.display = 'none';
+                selectedToken = selector.value;
+            }
+            
             const tokenInfo = tokenData[selectedToken];
+            
+            if (!tokenInfo) {
+                showTokenChangeNotification(`❌ Token ${selectedToken} no encontrado`);
+                return;
+            }
             
             if (socialVolumeChart) {
                 updateSocialVolumeChart();
@@ -1715,6 +1858,7 @@
         console.log('🚀 CriptoLobits Dashboard con Analytics cargado exitosamente!');
         console.log('📊 Gráficas interactivas disponibles en la tab de Análisis');
         console.log('🔄 Selector de tokens disponible para personalizar comparaciones');
+        console.log('🎯 Tokens personalizados: Selecciona "Personalizado" e ingresa cualquier símbolo!');
     </script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CriptoLobits Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
@@ -100,8 +101,9 @@
         
         .nav {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             padding: 0 1rem;
+            overflow-x: auto;
         }
         
         .tab-button {
@@ -117,6 +119,7 @@
             cursor: pointer;
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
+            white-space: nowrap;
         }
         
         .tab-button:hover {
@@ -162,6 +165,111 @@
             gap: 1.5rem;
         }
         
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .chart-container {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.25rem 0.75rem;
+            background-color: #374151;
+            color: #9ca3af;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn.active {
+            background-color: #fbbf24;
+            color: #111827;
+        }
+        
+        .filter-btn:hover {
+            background-color: #4b5563;
+        }
+        
+        .filter-btn.active:hover {
+            background-color: #f59e0b;
+        }
+        
+        /* Token Selector */
+        .token-selector {
+            background-color: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .token-selector:hover {
+            background-color: #4b5563;
+            border-color: #6b7280;
+        }
+        
+        .token-selector:focus {
+            outline: none;
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+        
+        /* Charts */
+        .chart-canvas {
+            max-height: 300px;
+        }
+        
+        .sentiment-gauges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .gauge-container {
+            text-align: center;
+        }
+        
+        .gauge-title {
+            font-size: 0.875rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+        }
+        
+        .gauge-canvas {
+            max-height: 150px;
+        }
+        
+        /* Opportunity Cards */
         .opportunity-card {
             background-color: #1f2937;
             border: 1px solid #374151;
@@ -475,6 +583,14 @@
                 flex-direction: column;
                 gap: 0.5rem;
             }
+            
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sentiment-gauges {
+                grid-template-columns: 1fr;
+            }
         }
         
         .hidden {
@@ -485,7 +601,7 @@
 <body>
     <!-- Warning Banner -->
     <div class="warning-banner">
-        ⚠️ Usando datos simulados - Las APIs reales están temporalmente bloqueadas por CORS. ¡El diseño y funcionalidad están perfectos!
+        ⚠️ Usando datos simulados - Las APIs reales están temporalmente bloqueadas por CORS. ¡Gráficas y análisis completamente funcionales!
     </div>
 
     <!-- Header -->
@@ -527,6 +643,9 @@
                 </button>
                 <button class="tab-button" onclick="showTab('alerts')" id="tab-alerts">
                     🚨 Alertas
+                </button>
+                <button class="tab-button" onclick="showTab('analytics')" id="tab-analytics">
+                    📊 Análisis
                 </button>
             </nav>
         </div>
@@ -638,6 +757,88 @@
                         <span class="signal-tag">Developer activity</span>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="content-analytics" class="tab-content">
+            <h2 class="section-title">📊 Análisis y Gráficas</h2>
+            
+            <!-- Social Volume Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">📈 Social Volume Evolution</h3>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.875rem; color: #9ca3af;">Comparar con:</span>
+                            <select id="tokenSelector" onchange="updateTokenChart()" class="token-selector">
+                                <option value="SOL">Solana (SOL)</option>
+                                <option value="LINK">Chainlink (LINK)</option>
+                                <option value="MATIC">Polygon (MATIC)</option>
+                                <option value="ADA">Cardano (ADA)</option>
+                                <option value="DOT">Polkadot (DOT)</option>
+                                <option value="AVAX">Avalanche (AVAX)</option>
+                                <option value="UNI">Uniswap (UNI)</option>
+                            </select>
+                        </div>
+                        <div class="time-filter">
+                            <button class="filter-btn" onclick="updateTimeframe('1D')">1D</button>
+                            <button class="filter-btn active" onclick="updateTimeframe('7D')">7D</button>
+                            <button class="filter-btn" onclick="updateTimeframe('30D')">30D</button>
+                        </div>
+                    </div>
+                </div>
+                <canvas id="socialVolumeChart" class="chart-canvas"></canvas>
+            </div>
+
+            <!-- Sentiment Gauges -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">😊 Sentiment Analysis</h3>
+                </div>
+                <div class="sentiment-gauges">
+                    <div class="gauge-container">
+                        <h4 class="gauge-title">Bitcoin (BTC)</h4>
+                        <canvas id="btcSentimentGauge" class="gauge-canvas"></canvas>
+                        <p style="color: #fbbf24; font-weight: 600; margin-top: 0.5rem;">67.8%</p>
+                    </div>
+                    <div class="gauge-container">
+                        <h4 class="gauge-title">Ethereum (ETH)</h4>
+                        <canvas id="ethSentimentGauge" class="gauge-canvas"></canvas>
+                        <p style="color: #10b981; font-weight: 600; margin-top: 0.5rem;">72.1%</p>
+                    </div>
+                    <div class="gauge-container">
+                        <h4 class="gauge-title" id="selectedTokenTitle">Solana (SOL)</h4>
+                        <canvas id="solSentimentGauge" class="gauge-canvas"></canvas>
+                        <p style="color: #10b981; font-weight: 600; margin-top: 0.5rem;" id="selectedTokenSentiment">78.9%</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <!-- Dev Activity Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">👨‍💻 Development Activity</h3>
+                    </div>
+                    <canvas id="devActivityChart" class="chart-canvas"></canvas>
+                </div>
+
+                <!-- Whale Activity Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">🐋 Whale Transactions</h3>
+                    </div>
+                    <canvas id="whaleActivityChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- News Impact Timeline -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3 class="chart-title">📰 News Impact Timeline</h3>
+                </div>
+                <canvas id="newsImpactChart" class="chart-canvas"></canvas>
             </div>
         </div>
 
@@ -992,7 +1193,7 @@
     <footer class="footer">
         <div class="container footer-content">
             <div class="footer-left">
-                <span>✅ Bloque 1: Social + OnChain + News</span>
+                <span>✅ Bloque 1: Social + OnChain + News + Analytics Personalizable</span>
                 <span>⏳ Bloque 2: Macro + Trading (Pendiente)</span>
                 <span>⏳ Bloque 3: Top 5 + Anti-Rugpull (Pendiente)</span>
             </div>
@@ -1004,6 +1205,56 @@
     </footer>
 
     <script>
+        let socialVolumeChart, devActivityChart, whaleActivityChart, newsImpactChart;
+        let btcGauge, ethGauge, solGauge;
+        let selectedToken = 'SOL';
+
+        // Datos simulados para diferentes tokens
+        const tokenData = {
+            'SOL': {
+                name: 'Solana',
+                data: [850, 920, 1050, 1120, 1234, 1180, 1300],
+                color: '#9945ff',
+                sentiment: 78.9
+            },
+            'LINK': {
+                name: 'Chainlink',
+                data: [680, 720, 840, 780, 890, 850, 920],
+                color: '#375bd2',
+                sentiment: 71.4
+            },
+            'MATIC': {
+                name: 'Polygon',
+                data: [520, 580, 650, 620, 750, 710, 780],
+                color: '#8247e5',
+                sentiment: 69.2
+            },
+            'ADA': {
+                name: 'Cardano',
+                data: [450, 480, 520, 510, 580, 560, 610],
+                color: '#0033ad',
+                sentiment: 65.8
+            },
+            'DOT': {
+                name: 'Polkadot',
+                data: [380, 420, 460, 440, 520, 490, 540],
+                color: '#e6007a',
+                sentiment: 68.3
+            },
+            'AVAX': {
+                name: 'Avalanche',
+                data: [320, 360, 410, 390, 450, 430, 480],
+                color: '#e84142',
+                sentiment: 72.7
+            },
+            'UNI': {
+                name: 'Uniswap',
+                data: [280, 310, 350, 330, 390, 370, 420],
+                color: '#ff007a',
+                sentiment: 66.9
+            }
+        };
+
         // Funciones para cambiar tabs
         function showTab(tabName) {
             // Ocultar todos los contenidos
@@ -1021,19 +1272,449 @@
             
             // Activar botón seleccionado
             document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Si es la tab de analytics, inicializar gráficas
+            if (tabName === 'analytics') {
+                setTimeout(initializeCharts, 100);
+            }
+        }
+
+        // Función para actualizar el token seleccionado
+        function updateTokenChart() {
+            selectedToken = document.getElementById('tokenSelector').value;
+            const tokenInfo = tokenData[selectedToken];
+            
+            if (socialVolumeChart) {
+                updateSocialVolumeChart();
+            }
+            
+            // Actualizar gauge title y valor
+            document.getElementById('selectedTokenTitle').textContent = `${tokenInfo.name} (${selectedToken})`;
+            document.getElementById('selectedTokenSentiment').textContent = `${tokenInfo.sentiment}%`;
+            
+            // Actualizar color del sentiment según el valor
+            const sentimentElement = document.getElementById('selectedTokenSentiment');
+            if (tokenInfo.sentiment >= 70) {
+                sentimentElement.style.color = '#10b981';
+            } else if (tokenInfo.sentiment >= 50) {
+                sentimentElement.style.color = '#fbbf24';
+            } else {
+                sentimentElement.style.color = '#ef4444';
+            }
+            
+            // Recrear el gauge con el nuevo valor
+            if (solGauge) {
+                solGauge.destroy();
+                const solGaugeCtx = document.getElementById('solSentimentGauge').getContext('2d');
+                solGauge = createGaugeChart(solGaugeCtx, tokenInfo.sentiment);
+            }
+        }
+
+        // Función para actualizar la gráfica de Social Volume
+        function updateSocialVolumeChart() {
+            const tokenInfo = tokenData[selectedToken];
+            
+            socialVolumeChart.data.datasets[2] = {
+                label: tokenInfo.name,
+                data: tokenInfo.data,
+                borderColor: tokenInfo.color,
+                backgroundColor: tokenInfo.color + '20',
+                tension: 0.4
+            };
+            
+            socialVolumeChart.update('active');
+            
+            // Mostrar notificación de cambio
+            showTokenChangeNotification(tokenInfo.name);
+        }
+
+        // Función para mostrar notificación de cambio
+        function showTokenChangeNotification(tokenName) {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(90deg, #10b981, #059669);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.innerHTML = `🔄 Gráfica actualizada con ${tokenName}`;
+            
+            // Agregar CSS de animación
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Función para crear gauge chart
+        function createGaugeChart(ctx, value, maxValue = 100) {
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [value, maxValue - value],
+                        backgroundColor: [
+                            value >= 70 ? '#10b981' : value >= 50 ? '#fbbf24' : '#ef4444',
+                            '#374151'
+                        ],
+                        borderWidth: 0,
+                        cutout: '70%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Función para inicializar todas las gráficas
+        function initializeCharts() {
+            // Destruir gráficas existentes si existen
+            if (socialVolumeChart) socialVolumeChart.destroy();
+            if (devActivityChart) devActivityChart.destroy();
+            if (whaleActivityChart) whaleActivityChart.destroy();
+            if (newsImpactChart) newsImpactChart.destroy();
+            if (btcGauge) btcGauge.destroy();
+            if (ethGauge) ethGauge.destroy();
+            if (solGauge) solGauge.destroy();
+
+            // Social Volume Chart
+            const socialCtx = document.getElementById('socialVolumeChart').getContext('2d');
+            const selectedTokenInfo = tokenData[selectedToken];
+            
+            socialVolumeChart = new Chart(socialCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Bitcoin',
+                        data: [2100, 2200, 2350, 2280, 2450, 2380, 2500],
+                        borderColor: '#f7931a',
+                        backgroundColor: 'rgba(247, 147, 26, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Ethereum',
+                        data: [1650, 1720, 1850, 1790, 1876, 1820, 1950],
+                        borderColor: '#627eea',
+                        backgroundColor: 'rgba(98, 126, 234, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: selectedTokenInfo.name,
+                        data: selectedTokenInfo.data,
+                        borderColor: selectedTokenInfo.color,
+                        backgroundColor: selectedTokenInfo.color + '20',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db',
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' mentions';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#9ca3af',
+                                callback: function(value) {
+                                    return value >= 1000 ? (value/1000).toFixed(1) + 'K' : value;
+                                }
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Dev Activity Chart
+            const devCtx = document.getElementById('devActivityChart').getContext('2d');
+            devActivityChart = new Chart(devCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Bitcoin', 'Ethereum', selectedTokenInfo.name],
+                    datasets: [{
+                        label: 'Activity Score',
+                        data: [89, 95, Math.floor(selectedTokenInfo.sentiment + 15)],
+                        backgroundColor: [
+                            'rgba(247, 147, 26, 0.8)',
+                            'rgba(98, 126, 234, 0.8)',
+                            selectedTokenInfo.color + 'CC'
+                        ],
+                        borderColor: [
+                            '#f7931a',
+                            '#627eea',
+                            selectedTokenInfo.color
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#374151',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Whale Activity Chart
+            const whaleCtx = document.getElementById('whaleActivityChart').getContext('2d');
+            whaleActivityChart = new Chart(whaleCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Bitcoin', 'Ethereum', selectedTokenInfo.name],
+                    datasets: [{
+                        data: [12, 8, Math.floor(Math.random() * 10) + 5],
+                        backgroundColor: [
+                            '#f7931a',
+                            '#627eea',
+                            selectedTokenInfo.color
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#374151',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + ' whale transactions';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // News Impact Chart
+            const newsCtx = document.getElementById('newsImpactChart').getContext('2d');
+            newsImpactChart = new Chart(newsCtx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Institutional',
+                        data: [{x: 1, y: 9}, {x: 3, y: 8}],
+                        backgroundColor: '#2563eb',
+                        borderColor: '#2563eb'
+                    }, {
+                        label: 'Technical',
+                        data: [{x: 2, y: 8}, {x: 5, y: 7}],
+                        backgroundColor: '#10b981',
+                        borderColor: '#10b981'
+                    }, {
+                        label: 'Adoption',
+                        data: [{x: 4, y: 7}, {x: 6, y: 6}],
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#f59e0b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                            titleColor: '#f9fafb',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#374151',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Tiempo',
+                                color: '#9ca3af'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Impact Score',
+                                color: '#9ca3af'
+                            },
+                            beginAtZero: true,
+                            max: 10,
+                            ticks: {
+                                color: '#9ca3af'
+                            },
+                            grid: {
+                                color: '#374151'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Sentiment Gauges
+            const btcGaugeCtx = document.getElementById('btcSentimentGauge').getContext('2d');
+            btcGauge = createGaugeChart(btcGaugeCtx, 67.8);
+
+            const ethGaugeCtx = document.getElementById('ethSentimentGauge').getContext('2d');
+            ethGauge = createGaugeChart(ethGaugeCtx, 72.1);
+
+            const solGaugeCtx = document.getElementById('solSentimentGauge').getContext('2d');
+            solGauge = createGaugeChart(solGaugeCtx, selectedTokenInfo.sentiment);
+        }
+
+        // Función para cambiar timeframe
+        function updateTimeframe(period) {
+            // Actualizar botones activos
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Simular cambio de datos según período
+            if (socialVolumeChart) {
+                let multiplier = 1;
+                switch(period) {
+                    case '1D': multiplier = 0.8; break;
+                    case '7D': multiplier = 1; break;
+                    case '30D': multiplier = 1.3; break;
+                }
+                
+                // Actualizar datos de todas las series
+                socialVolumeChart.data.datasets.forEach(dataset => {
+                    dataset.data = dataset.data.map(value => Math.floor(value * multiplier));
+                });
+                socialVolumeChart.update('active');
+                
+                showTokenChangeNotification(`Período cambiado a ${period}`);
+            }
         }
 
         // Simular datos en tiempo real
         function updateMetrics() {
-            console.log('📊 Simulando actualización de métricas...');
-            // En producción, aquí se conectarían las APIs reales
+            console.log('📊 Simulando actualización de métricas y gráficas...');
         }
 
-        // Intentar conectar APIs cada 30 segundos
-        setInterval(updateMetrics, 30000);
+        // Inicializar cuando se cargue la página
+        window.addEventListener('load', () => {
+            // Intentar conectar APIs cada 30 segundos
+            setInterval(updateMetrics, 30000);
+        });
         
-        console.log('🚀 CriptoLobits Dashboard cargado exitosamente!');
-        console.log('⚠️ Usando datos simulados - APIs reales requieren configuración CORS');
+        console.log('🚀 CriptoLobits Dashboard con Analytics cargado exitosamente!');
+        console.log('📊 Gráficas interactivas disponibles en la tab de Análisis');
+        console.log('🔄 Selector de tokens disponible para personalizar comparaciones');
     </script>
 </body>
 </html>

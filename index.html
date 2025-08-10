@@ -425,18 +425,18 @@
 </head>
 <body>
     <div class="header">
-        <!-- SELECTOR DE IDIOMA DROPDOWN -->
+        <!-- SELECTOR DE IDIOMA SIMPLIFICADO -->
         <div class="language-selector">
             <div class="lang-dropdown" id="langDropdown">
-                <button class="lang-btn" onclick="window.toggleLanguageDropdown(event)">
-                    <span id="currentLangText">🌐 Idioma</span>
+                <button class="lang-btn" onclick="toggleDropdown()">
+                    <span id="currentLangText">🌐 Español</span>
                     <span class="dropdown-arrow">▼</span>
                 </button>
                 <div class="lang-dropdown-menu" id="langDropdownMenu">
-                    <div class="lang-option active" onclick="window.selectLanguage('es', 'Español', event)">
+                    <div class="lang-option active" onclick="selectLang('es', 'Español')">
                         🇪🇸 Español
                     </div>
-                    <div class="lang-option" onclick="window.selectLanguage('en', 'English', event)">
+                    <div class="lang-option" onclick="selectLang('en', 'English')">
                         🇺🇸 English
                     </div>
                 </div>
@@ -1480,19 +1480,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 CriptoLobits Dashboard Bilingüe loaded successfully!');
             
-            // Configurar idioma inicial en español
-            const currentLangText = document.getElementById('currentLangText');
-            if (currentLangText) {
-                currentLangText.textContent = '🌐 Español';
-            }
-            
             // Inicializar en español por defecto
             changeLanguage('es');
             
             // Inicializar gráficas del tab activo inicial
             initializeChartsForTab('opportunities');
             
-            console.log('✅ Dashboard ready - Language dropdown system functional!');
+            console.log('✅ Dashboard ready - All systems functional!');
         });
 
         // ===== FUNCIONES DE DEPURACIÓN =====
@@ -1505,26 +1499,27 @@
             console.log('Active button:', document.querySelector('.tab-button.active')?.textContent?.trim() || 'None');
         };
 
-        window.debugLanguageDropdown = function() {
-            console.log('=== 🌐 LANGUAGE DROPDOWN DEBUG ===');
-            const currentLangText = document.getElementById('currentLangText');
-            const langMenu = document.getElementById('langDropdownMenu');
+        window.debugDropdown = function() {
+            console.log('=== 🌐 DROPDOWN DEBUG ===');
+            const currentText = document.getElementById('currentLangText');
+            const menu = document.getElementById('langDropdownMenu');
             const dropdown = document.getElementById('langDropdown');
             
-            console.log('Current language text:', currentLangText?.textContent);
-            console.log('Menu element found:', !!langMenu);
-            console.log('Dropdown element found:', !!dropdown);
-            console.log('Menu is visible:', langMenu?.classList.contains('show'));
-            console.log('Dropdown is open:', dropdown?.classList.contains('open'));
+            console.log('Current language text:', currentText?.textContent);
+            console.log('Menu found:', !!menu);
+            console.log('Dropdown found:', !!dropdown);
+            console.log('Menu visible:', menu?.classList.contains('show'));
             
             // Test manual
-            console.log('Testing manual dropdown toggle...');
-            window.toggleLanguageDropdown();
+            console.log('Testing dropdown...');
+            toggleDropdown();
         };
 
         // Exponer funciones globalmente
         window.showTab = showTab;
         window.changeLanguage = changeLanguage;
+        window.toggleDropdown = toggleDropdown;
+        window.selectLang = selectLang;
         window.initializeChartsForTab = initializeChartsForTab;
     </script>
 </body>

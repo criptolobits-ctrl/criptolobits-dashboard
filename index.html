@@ -425,18 +425,18 @@
 </head>
 <body>
     <div class="header">
-        <!-- SELECTOR DE IDIOMA SIMPLIFICADO -->
+        <!-- SELECTOR DE IDIOMA FUNCIONAL -->
         <div class="language-selector">
-            <div class="lang-dropdown" id="langDropdown">
-                <button class="lang-btn" onclick="toggleDropdown()">
+            <div class="lang-dropdown">
+                <button class="lang-btn" onclick="dropdownToggle()">
                     <span id="currentLangText">🌐 Español</span>
                     <span class="dropdown-arrow">▼</span>
                 </button>
-                <div class="lang-dropdown-menu" id="langDropdownMenu">
-                    <div class="lang-option active" onclick="selectLang('es', 'Español')">
+                <div class="lang-dropdown-menu" id="langMenu" style="display: none;">
+                    <div class="lang-option active" onclick="changeLang('es', 'Español')">
                         🇪🇸 Español
                     </div>
-                    <div class="lang-option" onclick="selectLang('en', 'English')">
+                    <div class="lang-option" onclick="changeLang('en', 'English')">
                         🇺🇸 English
                     </div>
                 </div>
@@ -1499,27 +1499,24 @@
             console.log('Active button:', document.querySelector('.tab-button.active')?.textContent?.trim() || 'None');
         };
 
-        window.debugDropdown = function() {
-            console.log('=== 🌐 DROPDOWN DEBUG ===');
-            const currentText = document.getElementById('currentLangText');
-            const menu = document.getElementById('langDropdownMenu');
-            const dropdown = document.getElementById('langDropdown');
+        window.testDropdown = function() {
+            console.log('=== 🌐 TESTING DROPDOWN ===');
+            var menu = document.getElementById('langMenu');
+            var text = document.getElementById('currentLangText');
             
-            console.log('Current language text:', currentText?.textContent);
             console.log('Menu found:', !!menu);
-            console.log('Dropdown found:', !!dropdown);
-            console.log('Menu visible:', menu?.classList.contains('show'));
+            console.log('Text found:', !!text);
+            console.log('Current text:', text ? text.textContent : 'Not found');
             
-            // Test manual
-            console.log('Testing dropdown...');
-            toggleDropdown();
+            // Test toggle
+            dropdownToggle();
         };
 
         // Exponer funciones globalmente
         window.showTab = showTab;
         window.changeLanguage = changeLanguage;
-        window.toggleDropdown = toggleDropdown;
-        window.selectLang = selectLang;
+        window.dropdownToggle = dropdownToggle;
+        window.changeLang = changeLang;
         window.initializeChartsForTab = initializeChartsForTab;
     </script>
 </body>

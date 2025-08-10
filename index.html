@@ -425,18 +425,36 @@
 </head>
 <body>
     <div class="header">
-        <!-- SELECTOR DE IDIOMA FUNCIONAL -->
+        <!-- SELECTOR DE IDIOMA - JAVASCRIPT INLINE -->
         <div class="language-selector">
             <div class="lang-dropdown">
-                <button class="lang-btn" onclick="dropdownToggle()">
+                <button class="lang-btn" onclick="
+                    var menu = document.getElementById('langMenu');
+                    if (menu.style.display === 'block') {
+                        menu.style.display = 'none';
+                    } else {
+                        menu.style.display = 'block';
+                    }
+                    console.log('Dropdown toggled');
+                ">
                     <span id="currentLangText">🌐 Español</span>
                     <span class="dropdown-arrow">▼</span>
                 </button>
                 <div class="lang-dropdown-menu" id="langMenu" style="display: none;">
-                    <div class="lang-option active" onclick="changeLang('es', 'Español')">
+                    <div class="lang-option active" onclick="
+                        document.getElementById('currentLangText').textContent = '🌐 Español';
+                        document.getElementById('langMenu').style.display = 'none';
+                        changeLanguage('es');
+                        console.log('Spanish selected');
+                    ">
                         🇪🇸 Español
                     </div>
-                    <div class="lang-option" onclick="changeLang('en', 'English')">
+                    <div class="lang-option" onclick="
+                        document.getElementById('currentLangText').textContent = '🌐 English';
+                        document.getElementById('langMenu').style.display = 'none';
+                        changeLanguage('en');
+                        console.log('English selected');
+                    ">
                         🇺🇸 English
                     </div>
                 </div>
@@ -1507,16 +1525,23 @@
             console.log('Menu found:', !!menu);
             console.log('Text found:', !!text);
             console.log('Current text:', text ? text.textContent : 'Not found');
+            console.log('Menu display:', menu ? menu.style.display : 'Not found');
             
-            // Test toggle
-            dropdownToggle();
+            // Test toggle inline
+            if (menu) {
+                if (menu.style.display === 'block') {
+                    menu.style.display = 'none';
+                    console.log('Menu closed');
+                } else {
+                    menu.style.display = 'block';
+                    console.log('Menu opened');
+                }
+            }
         };
 
         // Exponer funciones globalmente
         window.showTab = showTab;
         window.changeLanguage = changeLanguage;
-        window.dropdownToggle = dropdownToggle;
-        window.changeLang = changeLang;
         window.initializeChartsForTab = initializeChartsForTab;
     </script>
 </body>

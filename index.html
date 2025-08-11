@@ -1197,6 +1197,717 @@
 
         <!-- Other Sections -->
         <div id="oportunidades" class="section">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+<style>
+    /* --- Estilos para la sección Oportunidades --- */
+
+    /* Variables de color para fácil mantenimiento */
+    :root {
+        --primary-color: #00ff88;
+        --secondary-color: #0099ff;
+        --text-color: #ccc;
+        --text-dark-color: #888;
+        --bg-card-color: rgba(255, 255, 255, 0.08);
+        --border-color: rgba(0, 255, 136, 0.2);
+        --positive-color: #00ff88;
+        --negative-color: #ff4d4d;
+    }
+
+    .opportunities-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .section-header h2 {
+        font-size: 28px;
+        background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+    }
+
+    .section-header p {
+        color: var(--text-color);
+        font-size: 16px;
+    }
+
+    /* --- Barra de Filtros --- */
+    .filters-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 20px;
+        background: var(--bg-card-color);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(15px);
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-grow: 1;
+    }
+
+    .filter-group label {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--text-dark-color);
+        text-transform: uppercase;
+    }
+
+    .filter-group select,
+    .filter-group .btn-group button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-group select:hover,
+    .filter-group .btn-group button:hover {
+        border-color: var(--primary-color);
+        background: rgba(0, 255, 136, 0.1);
+    }
+    
+    .btn-group {
+        display: flex;
+    }
+    .btn-group button {
+        border-radius: 0;
+        border-right-width: 0;
+    }
+    .btn-group button:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+    .btn-group button:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        border-right-width: 1px;
+    }
+    .btn-group button.active {
+        background: linear-gradient(45deg, var(--primary-color), #00cc70);
+        color: #000;
+        font-weight: bold;
+        border-color: var(--primary-color);
+    }
+
+
+    /* --- Tabla de Oportunidades --- */
+    .opportunities-table-container {
+        background: var(--bg-card-color);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(15px);
+        overflow-x: auto; /* Para responsividad en móviles */
+    }
+
+    .opportunities-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .opportunities-table th,
+    .opportunities-table td {
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .opportunities-table thead {
+        background: rgba(0, 255, 136, 0.1);
+    }
+
+    .opportunities-table th {
+        color: var(--primary-color);
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    
+    .opportunities-table tbody tr {
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .opportunities-table tbody tr:hover {
+        background-color: rgba(0, 255, 136, 0.08);
+    }
+    
+    .opportunities-table td {
+        color: var(--text-color);
+        font-size: 15px;
+    }
+    
+    .crypto-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .crypto-name-cell img {
+        width: 28px;
+        height: 28px;
+    }
+    .crypto-name-cell .ticker {
+        color: var(--text-dark-color);
+        font-size: 12px;
+    }
+
+    .text-positive { color: var(--positive-color); }
+    .text-negative { color: var(--negative-color); }
+
+    .score-badge {
+        font-weight: bold;
+        background: linear-gradient(45deg, #0099ff, #0055ee);
+        padding: 5px 10px;
+        border-radius: 8px;
+        color: white;
+    }
+    .score-badge.high {
+        background: linear-gradient(45deg, #00ff88, #00cc70);
+        color: #000;
+    }
+    
+
+    /* --- Modal de Análisis Detallado --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 15, 35, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        display: none; /* Se muestra con JS */
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+        background: #1a1a2e;
+        border-radius: 20px;
+        border: 1px solid var(--border-color);
+        width: 90%;
+        max-width: 1000px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 40px rgba(0, 255, 136, 0.1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header h3 {
+        font-size: 24px;
+        color: white;
+    }
+    .modal-header .close-button {
+        font-size: 28px;
+        color: var(--text-dark-color);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    .modal-header .close-button:hover {
+        color: white;
+    }
+
+    .modal-body {
+        padding: 25px;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+    }
+    
+    .chart-container, .analysis-container {
+        background: var(--bg-card-color);
+        border-radius: 15px;
+        padding: 20px;
+    }
+    
+    .analysis-section {
+        margin-bottom: 20px;
+    }
+    
+    .analysis-section h4 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        font-size: 16px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 8px;
+    }
+
+    .indicators-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .indicator {
+        background: rgba(0,0,0,0.2);
+        padding: 10px;
+        border-radius: 8px;
+    }
+    .indicator .label {
+        font-size: 12px;
+        color: var(--text-dark-color);
+        margin-bottom: 5px;
+    }
+    .indicator .value {
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+    }
+
+    #fundamentalAnalysis p {
+        font-size: 14px;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+    
+    #aiSignal {
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    #aiSignal.buy {
+        background-color: rgba(0, 255, 136, 0.2);
+        color: var(--positive-color);
+        border: 1px solid var(--positive-color);
+    }
+     #aiSignal.sell {
+        background-color: rgba(255, 77, 77, 0.2);
+        color: var(--negative-color);
+        border: 1px solid var(--negative-color);
+    }
+    #aiSignal.hold {
+        background-color: rgba(255, 170, 0, 0.2);
+        color: #ffaa00;
+        border: 1px solid #ffaa00;
+    }
+
+    /* --- Alertas y Backtesting --- */
+    .secondary-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .feature-card {
+        background: var(--bg-card-color);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(15px);
+        padding: 25px;
+    }
+    .feature-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+    }
+    .alert-form input {
+         width: calc(100% - 22px);
+         background: rgba(255, 255, 255, 0.1);
+         border: 1px solid var(--border-color);
+         color: var(--text-color);
+         padding: 12px;
+         border-radius: 8px;
+         margin-bottom: 15px;
+    }
+     .primary-btn {
+        width: 100%;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        background: linear-gradient(45deg, #00ff88, #00cc70);
+        color: #000;
+        box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+    }
+    .primary-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+    }
+    
+    #backtestingResults p {
+        color: var(--text-color);
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+     #backtestingResults .value {
+        color: white;
+        font-weight: bold;
+     }
+
+    /* --- Responsividad --- */
+    @media (max-width: 900px) {
+        .modal-body {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 768px) {
+        .filters-bar {
+            flex-direction: column;
+        }
+        .crypto-name-cell .name { display: none; } /* Ocultar nombre en móvil */
+    }
+
+</style>
+
+<div class="opportunities-container">
+    
+    <div class="section-header">
+        <h2>Panel de Oportunidades IA</h2>
+        <p>Análisis multi-factor de <strong id="opportunitiesCount">247</strong> oportunidades en tiempo real.</p>
+    </div>
+
+    <div class="filters-bar">
+        <div class="filter-group">
+            <label for="categoryFilter">Categoría</label>
+            <select id="categoryFilter">
+                <option value="all">Todas</option>
+                <option value="DeFi">DeFi</option>
+                <option value="AI">AI</option>
+                <option value="RWA">RWA</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Layer 1">Layer 1</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="scoreFilter">Score Mínimo</label>
+            <select id="scoreFilter">
+                <option value="0">Todos</option>
+                <option value="90">&gt; 90 (Élite)</option>
+                <option value="80">&gt; 80 (Fuerte)</option>
+                <option value="70">&gt; 70 (Potencial)</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label>Timeframe</label>
+            <div class="btn-group" id="timeframeFilter">
+                <button class="active" data-value="24h">24h</button>
+                <button data-value="7d">7d</button>
+                <button data-value="30d">30d</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="opportunities-table-container">
+        <table class="opportunities-table">
+            <thead>
+                <tr>
+                    <th>Activo</th>
+                    <th>Score</th>
+                    <th>Precio</th>
+                    <th>24h %</th>
+                    <th>7d %</th>
+                    <th>Volumen (24h)</th>
+                    <th>RSI</th>
+                    <th>MACD Signal</th>
+                </tr>
+            </thead>
+            <tbody id="cryptoTableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <div class="secondary-features">
+        <div class="feature-card">
+            <h3>🔔 Crear Alerta de Precio</h3>
+            <form id="alertForm" class="alert-form">
+                <input type="text" id="alertCrypto" placeholder="Ticker (ej. BTC)">
+                <input type="number" id="alertPrice" placeholder="Precio objetivo (USD)">
+                <button type="submit" class="primary-btn">Establecer Alerta</button>
+            </form>
+        </div>
+        <div class="feature-card" id="backtestingResults">
+            <h3>📈 Backtesting de Estrategia</h3>
+            <p>Estrategia de Score > 85 (Últimos 6 meses)</p>
+            <p>Retorno Total: <span class="value text-positive">+128.4%</span></p>
+            <p>Win Rate: <span class="value">78.2%</span></p>
+            <p>Operaciones Exitosas: <span class="value">43 de 55</span></p>
+        </div>
+    </div>
+
+</div>
+
+<div id="cryptoModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalCryptoName">Detalles del Activo</h3>
+            <span id="closeModal" class="close-button">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+            <div class="analysis-container">
+                <div class="analysis-section" id="technicalIndicators">
+                    <h4>Indicadores Técnicos</h4>
+                    <div class="indicators-grid">
+                        <div class="indicator"><div class="label">Precio Actual</div><div id="modalPrice" class="value"></div></div>
+                        <div class="indicator"><div class="label">Score IA</div><div id="modalScore" class="value"></div></div>
+                        <div class="indicator"><div class="label">RSI (14)</div><div id="modalRSI" class="value"></div></div>
+                        <div class="indicator"><div class="label">MACD</div><div id="modalMACD" class="value"></div></div>
+                        <div class="indicator"><div class="label">MA 20</div><div id="modalMA20" class="value"></div></div>
+                        <div class="indicator"><div class="label">MA 50</div><div id="modalMA50" class="value"></div></div>
+                    </div>
+                </div>
+                <div class="analysis-section" id="fundamentalAnalysis">
+                    <h4>Análisis Fundamental IA</h4>
+                    <p id="modalFundamental"></p>
+                </div>
+                <div class="analysis-section">
+                    <h4>Señal de Trading IA</h4>
+                    <div id="aiSignal"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DATOS SIMULADOS REALISTAS ---
+    const cryptoData = [
+        { name: 'Bitcoin', ticker: 'BTC', price: 68530.24, change24h: 2.1, change7d: 5.4, volume: 45.2e9, rsi: 68, macd: 'Bullish', score: 95, category: 'Layer 1', ma20: 67100, ma50: 65200 },
+        { name: 'Ethereum', ticker: 'ETH', price: 3610.55, change24h: 3.5, change7d: 8.1, volume: 22.1e9, rsi: 72, macd: 'Bullish', score: 94, category: 'Layer 1', ma20: 3500, ma50: 3410 },
+        { name: 'Solana', ticker: 'SOL', price: 172.45, change24h: -1.2, change7d: 15.8, volume: 3.5e9, rsi: 55, macd: 'Bearish Cross', score: 91, category: 'Layer 1', ma20: 168, ma50: 155 },
+        { name: 'Chainlink', ticker: 'LINK', price: 18.77, change24h: 8.2, change7d: 22.3, volume: 890e6, rsi: 78, macd: 'Strong Bullish', score: 93, category: 'RWA', ma20: 17.5, ma50: 16.2 },
+        { name: 'Uniswap', ticker: 'UNI', price: 11.50, change24h: 4.1, change7d: 11.0, volume: 350e6, rsi: 65, macd: 'Bullish', score: 88, category: 'DeFi', ma20: 10.9, ma50: 10.2 },
+        { name: 'Render', ticker: 'RNDR', price: 10.25, change24h: 12.5, change7d: 35.1, volume: 480e6, rsi: 82, macd: 'Overbought', score: 92, category: 'AI', ma20: 9.1, ma50: 8.5 },
+        { name: 'Axie Infinity', ticker: 'AXS', price: 8.15, change24h: -2.5, change7d: 3.2, volume: 120e6, rsi: 48, macd: 'Neutral', score: 75, category: 'Gaming', ma20: 8.0, ma50: 7.8 },
+        { name: 'Aave', ticker: 'AAVE', price: 92.30, change24h: 1.8, change7d: 9.5, volume: 150e6, rsi: 61, macd: 'Bullish', score: 89, category: 'DeFi', ma20: 89, ma50: 85 },
+        { name: 'The Graph', ticker: 'GRT', price: 0.33, change24h: 9.8, change7d: 18.2, volume: 210e6, rsi: 75, macd: 'Strong Bullish', score: 87, category: 'AI', ma20: 0.30, ma50: 0.28 },
+        { name: 'Ondo Finance', ticker: 'ONDO', price: 1.24, change24h: 5.5, change7d: 25.4, volume: 300e6, rsi: 79, macd: 'Bullish', score: 90, category: 'RWA', ma20: 1.1, ma50: 0.98 },
+        { name: 'Immutable X', ticker: 'IMX', price: 2.33, change24h: 0.5, change7d: 6.8, volume: 180e6, rsi: 58, macd: 'Neutral', score: 86, category: 'Gaming', ma20: 2.2, ma50: 2.1 },
+        { name: 'Cardano', ticker: 'ADA', price: 0.46, change24h: -0.8, change7d: 2.1, volume: 550e6, rsi: 51, macd: 'Bearish', score: 78, category: 'Layer 1', ma20: 0.45, ma50: 0.47 },
+        { name: 'Avalanche', ticker: 'AVAX', price: 37.80, change24h: 2.2, change7d: 12.5, volume: 600e6, rsi: 64, macd: 'Bullish', score: 85, category: 'Layer 1', ma20: 36, ma50: 34 },
+        { name: 'Fetch.ai', ticker: 'FET', price: 2.25, change24h: 15.1, change7d: 40.2, volume: 450e6, rsi: 85, macd: 'Overbought', score: 91, category: 'AI', ma20: 1.9, ma50: 1.7 },
+        { name: 'Lido DAO', ticker: 'LDO', price: 2.40, change24h: 3.3, change7d: 14.8, volume: 130e6, rsi: 69, macd: 'Bullish', score: 89, category: 'DeFi', ma20: 2.2, ma50: 2.0 },
+        { name: 'Gala', ticker: 'GALA', price: 0.045, change24h: -3.1, change7d: 1.5, volume: 160e6, rsi: 47, macd: 'Bearish', score: 72, category: 'Gaming', ma20: 0.046, ma50: 0.048 },
+        { name: 'Polkadot', ticker: 'DOT', price: 7.30, change24h: 1.1, change7d: 8.9, volume: 320e6, rsi: 62, macd: 'Bullish', score: 84, category: 'Layer 1', ma20: 7.0, ma50: 6.8 },
+        { name: 'Polygon', ticker: 'MATIC', price: 0.72, change24h: 0.9, change7d: 5.6, volume: 400e6, rsi: 59, macd: 'Neutral', score: 82, category: 'Layer 1', ma20: 0.70, ma50: 0.68 },
+        { name: 'Maker', ticker: 'MKR', price: 2350.00, change24h: 2.8, change7d: 10.2, volume: 110e6, rsi: 66, macd: 'Bullish', score: 90, category: 'DeFi', ma20: 2280, ma50: 2200 },
+        { name: 'SingularityNET', ticker: 'AGIX', price: 0.98, change24h: 11.3, change7d: 33.1, volume: 250e6, rsi: 81, macd: 'Overbought', score: 88, category: 'AI', ma20: 0.85, ma50: 0.78 },
+        { name: 'Centrifuge', ticker: 'CFG', price: 0.82, change24h: 7.1, change7d: 28.9, volume: 50e6, rsi: 77, macd: 'Strong Bullish', score: 89, category: 'RWA', ma20: 0.75, ma50: 0.68 },
+    ];
+    // Simular datos históricos para la gráfica
+    cryptoData.forEach(crypto => {
+        crypto.history = Array.from({length: 30}, (_, i) => crypto.price * (1 + (Math.random() - 0.5) * 0.1 * (1 - i/30)));
+    });
+
+    // --- DOM Elements ---
+    const tableBody = document.getElementById('cryptoTableBody');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const scoreFilter = document.getElementById('scoreFilter');
+    const timeframeFilter = document.getElementById('timeframeFilter');
+    const opportunitiesCount = document.getElementById('opportunitiesCount');
+    
+    // Modal elements
+    const modal = document.getElementById('cryptoModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    let priceChartInstance = null;
+
+    // --- FUNCIONES ---
+
+    function renderTable(data) {
+        tableBody.innerHTML = '';
+        if (data.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 40px;">No se encontraron oportunidades con los filtros seleccionados.</td></tr>`;
+            return;
+        }
+        data.forEach(crypto => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-ticker', crypto.ticker);
+
+            const change24hClass = crypto.change24h >= 0 ? 'text-positive' : 'text-negative';
+            const change7dClass = crypto.change7d >= 0 ? 'text-positive' : 'text-negative';
+            const scoreClass = crypto.score >= 90 ? 'high' : '';
+
+            row.innerHTML = `
+                <td>
+                    <div class="crypto-name-cell">
+                        <img src="https://assets.coincap.io/assets/icons/${crypto.ticker.toLowerCase()}@2x.png" alt="${crypto.name}">
+                        <div>
+                            <div class="name">${crypto.name}</div>
+                            <div class="ticker">${crypto.ticker}</div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="score-badge ${scoreClass}">${crypto.score}</span></td>
+                <td>$${crypto.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td class="${change24hClass}">${crypto.change24h.toFixed(1)}%</td>
+                <td class="${change7dClass}">${crypto.change7d.toFixed(1)}%</td>
+                <td>$${(crypto.volume / 1e6).toFixed(2)}M</td>
+                <td>${crypto.rsi}</td>
+                <td>${crypto.macd}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function applyFilters() {
+        const selectedCategory = categoryFilter.value;
+        const minScore = parseInt(scoreFilter.value);
+        // Timeframe filter logic can be added here to change the displayed % columns
+        
+        let filteredData = cryptoData;
+
+        if (selectedCategory !== 'all') {
+            filteredData = filteredData.filter(c => c.category === selectedCategory);
+        }
+
+        if (minScore > 0) {
+            filteredData = filteredData.filter(c => c.score >= minScore);
+        }
+        
+        // Ordenar por score descendente por defecto
+        filteredData.sort((a, b) => b.score - a.score);
+
+        opportunitiesCount.textContent = filteredData.length;
+        renderTable(filteredData);
+    }
+    
+    function openModal(crypto) {
+        // Populate modal data
+        document.getElementById('modalCryptoName').textContent = `${crypto.name} (${crypto.ticker})`;
+        document.getElementById('modalPrice').textContent = `$${crypto.price.toLocaleString()}`;
+        document.getElementById('modalScore').textContent = crypto.score;
+        document.getElementById('modalRSI').textContent = crypto.rsi;
+        document.getElementById('modalMACD').textContent = crypto.macd;
+        document.getElementById('modalMA20').textContent = `$${crypto.ma20.toLocaleString()}`;
+        document.getElementById('modalMA50').textContent = `$${crypto.ma50.toLocaleString()}`;
+        
+        // Simulated fundamental analysis
+        document.getElementById('modalFundamental').textContent = `Análisis de ${crypto.name}: Este activo muestra un fuerte momentum en la categoría ${crypto.category}. El score de ${crypto.score} se debe a un alto volumen de transacciones y sentimiento positivo en redes. El RSI de ${crypto.rsi} sugiere ${crypto.rsi > 70 ? 'una posible sobrecompra a corto plazo, pero la tendencia general es alcista.' : 'espacio para crecer antes de alcanzar niveles de sobrecompra.'}`;
+        
+        // AI Signal
+        const signalDiv = document.getElementById('aiSignal');
+        let signal, signalClass;
+        if (crypto.score > 90 && crypto.rsi < 75) {
+            signal = 'Compra Fuerte';
+            signalClass = 'buy';
+        } else if (crypto.score > 80 && crypto.rsi < 80) {
+            signal = 'Mantener / Acumular';
+            signalClass = 'hold';
+        } else {
+            signal = 'Venta / Precaución';
+            signalClass = 'sell';
+        }
+        signalDiv.textContent = signal;
+        signalDiv.className = signalClass;
+
+
+        // Render Chart
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        if (priceChartInstance) {
+            priceChartInstance.destroy();
+        }
+        priceChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 30}, (_, i) => `D-${29-i}`),
+                datasets: [{
+                    label: 'Precio (USD)',
+                    data: crypto.history,
+                    borderColor: 'rgba(0, 255, 136, 1)',
+                    backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        ticks: { color: '#888' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#888', maxTicksLimit: 10 },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        if (priceChartInstance) {
+            priceChartInstance.destroy();
+            priceChartInstance = null;
+        }
+    }
+
+    // --- EVENT LISTENERS ---
+    [categoryFilter, scoreFilter].forEach(el => el.addEventListener('change', applyFilters));
+    
+    timeframeFilter.addEventListener('click', (e) => {
+        if(e.target.tagName === 'BUTTON') {
+            timeframeFilter.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            // Aquí se podría agregar lógica para cambiar las columnas de la tabla
+        }
+    });
+
+    tableBody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (row && row.dataset.ticker) {
+            const ticker = row.dataset.ticker;
+            const crypto = cryptoData.find(c => c.ticker === ticker);
+            if (crypto) {
+                openModal(crypto);
+            }
+        }
+    });
+    
+    closeModalBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.getElementById('alertForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const crypto = document.getElementById('alertCrypto').value;
+        const price = document.getElementById('alertPrice').value;
+        if (crypto && price) {
+            alert(`✅ Alerta creada para ${crypto.toUpperCase()} en $${price}.`);
+            e.target.reset();
+        }
+    });
+
+    // --- INICIALIZACIÓN ---
+    applyFilters();
+});
+</script>
             <div style="text-align: center; padding: 60px 20px;">
                 <h2>🚧 Sección en Desarrollo</h2>
                 <p>Esta sección estará disponible próximamente con análisis avanzado de oportunidades de inversión.</p>

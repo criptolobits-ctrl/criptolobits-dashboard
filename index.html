@@ -3,49 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CriptoLobits Dashboard - Sección Trading</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
-    
+    <title>CriptoLobits Dashboard - Automatización Social IA</title>
     <style>
-        /* ESTILOS BASE DEL DASHBOARD (COPIADOS DE LA PLANTILLA ORIGINAL) */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f23;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            background-image: 
+                linear-gradient(rgba(15, 15, 35, 0.85), rgba(26, 26, 46, 0.85)),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900"><defs><linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23001122"/><stop offset="50%" style="stop-color:%23002244"/><stop offset="100%" style="stop-color:%23003366"/></linearGradient></defs><rect width="100%" height="100%" fill="url(%23bg)"/><g opacity="0.1"><path d="M800,200 Q950,150 1100,200 T1400,200" stroke="%2300ffcc" stroke-width="2" fill="none"/><path d="M600,300 Q750,250 900,300 T1200,300" stroke="%2300ffcc" stroke-width="1.5" fill="none"/><path d="M400,400 Q550,350 700,400 T1000,400" stroke="%2300ffcc" stroke-width="1" fill="none"/></g><g opacity="0.15"><circle cx="1200" cy="200" r="3" fill="%2300ffcc"/><circle cx="1000" cy="150" r="2" fill="%2300ffcc"/><circle cx="1300" cy="180" r="2.5" fill="%2300ffcc"/><circle cx="900" cy="120" r="1.5" fill="%2300ffcc"/></g><g opacity="0.1"><polygon points="1100,500 1120,480 1140,500 1120,520" fill="%2300ffcc"/><polygon points="1200,600 1215,585 1230,600 1215,615" fill="%2300ffcc"/><polygon points="1000,550 1012,538 1024,550 1012,562" fill="%2300ffcc"/></g><g opacity="0.08"><text x="200" y="700" font-family="monospace" font-size="120" fill="%2300ffcc" font-weight="bold">CRIPTOLOBITS</text><text x="250" y="750" font-family="monospace" font-size="24" fill="%2300ffcc">Datos, Decisiones y Dinero en la era cripto</text></g><g opacity="0.12"><path d="M1300,300 L1350,250 L1400,300 L1380,340 L1360,350 L1340,340 L1320,330 Z" stroke="%2300ffcc" stroke-width="2" fill="none"/><rect x="1340" y="280" width="30" height="30" rx="5" stroke="%2300ffcc" stroke-width="1.5" fill="none"/><text x="1350" y="300" font-family="monospace" font-size="16" fill="%2300ffcc" font-weight="bold">AI</text><g stroke="%2300ffcc" stroke-width="1" opacity="0.6"><line x1="1330" y1="290" x2="1320" y2="285"/><line x1="1330" y1="295" x2="1315" y2="295"/><line x1="1330" y1="300" x2="1320" y2="305"/><line x1="1375" y1="290" x2="1385" y2="285"/><line x1="1375" y1="295" x2="1390" y2="295"/><line x1="1375" y1="300" x2="1385" y2="305"/></g></g></svg>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: white;
-            padding-bottom: 50px; /* Espacio extra al final */
+            min-height: 100vh;
         }
-        .container {
-            max-width: 1600px;
+
+        .header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00ff88;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .main-nav {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            padding: 0;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 20px;
+            display: flex;
+            overflow-x: auto;
         }
-        .card {
-            background: rgba(26, 26, 46, 0.7);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(0, 255, 136, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.3s ease;
+
+        .nav-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+            color: #ccc;
         }
-        .card:hover {
-            border-color: #00ff88;
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
         }
-        .section-title {
+
+        .nav-item.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .logo {
             font-size: 28px;
-            margin-bottom: 30px;
-            color: #fff;
+            font-weight: bold;
             background: linear-gradient(45deg, #00ff88, #0099ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: left;
+            margin-bottom: 10px;
         }
+
+        .subtitle {
+            color: #ccc;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overview-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .overview-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .news-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .news-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .news-item h4 {
+            margin-bottom: 10px;
+            color: #00ff88;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 32px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .automation-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 2px solid #00ff88;
+        }
+
+        .section-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00ff88;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
         .btn {
-            padding: 10px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             font-weight: bold;
@@ -53,686 +245,1443 @@
             transition: all 0.3s ease;
             font-size: 14px;
         }
+
         .btn-primary {
             background: linear-gradient(45deg, #00ff88, #00cc70);
-            color: #0f0f23;
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            color: #000;
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
         }
 
-        /* --- ESTILOS ESPECÍFICOS PARA LA SECCIÓN DE TRADING --- */
-        .trading-grid {
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .social-networks {
             display: grid;
-            grid-template-columns: 1fr 400px; /* Columna principal para la gráfica, columna lateral para módulos */
-            gap: 25px;
-        }
-
-        .main-chart-container {
-            grid-column: 1 / 2;
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
-        }
-        
-        .sidebar-container {
-            grid-column: 2 / 3;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
+            margin-top: 30px;
         }
 
-        .chart-card {
-            display: flex;
-            flex-direction: column;
-            height: 650px; /* Altura fija para la gráfica principal */
+        .network-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #00ff88;
         }
 
-        .chart-header {
+        .network-card.telegram {
+            border-left-color: #0088cc;
+        }
+
+        .network-card.twitter {
+            border-left-color: #1da1f2;
+        }
+
+        .network-card.instagram {
+            border-left-color: #e4405f;
+        }
+
+        .network-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .network-icon {
+            font-size: 24px;
+        }
+
+        .network-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+            margin-left: auto;
+        }
+
+        .network-stats {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .live-feed {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .feed-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .feed-time {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .feed-content {
+            line-height: 1.4;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00ff88;
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        /* Enhanced Automation Styles */
+        .realtime-metrics {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .metrics-grid-live {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card-live {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card-live:hover {
+            transform: translateY(-3px);
+            border-color: #00ff88;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.2);
+        }
+
+        .metric-icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px #00ff88);
+        }
+
+        .metric-content {
+            flex: 1;
+        }
+
+        .metric-title {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 3px;
+        }
+
+        .metric-trend {
+            font-size: 12px;
+            color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .pipeline-status-advanced {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .pipeline-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pipeline-step-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step-card.active {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .step-icon {
+            font-size: 28px;
+            z-index: 2;
+        }
+
+        .step-pulse {
+            position: absolute;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .step-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            margin-left: auto;
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .step-body h4 {
+            color: #00ff88;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .step-body p {
+            color: #ccc;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .progress-bar-advanced {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill-advanced {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #0099ff);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .step-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .detail-item {
+            font-size: 11px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .network-config {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .network-config p {
+            margin: 8px 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .pulse-dot {
+            animation: pulse-dot 2s infinite;
+        }
+
+        .warning-dot {
+            background: #ffaa00;
+            box-shadow: 0 0 10px #ffaa00;
+            animation: pulse-warning 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(0, 255, 136, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+            }
+        }
+
+        @keyframes pulse-warning {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(255, 170, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 170, 0, 0);
+            }
+        }
+
+        .feed-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 12px;
+        }
+
+        .feed-item {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .feed-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #00ff88;
+            transform: translateX(5px);
+        }
+
+        .feed-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .chart-title {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .timeframe-controls button {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ccc;
-            border: 1px solid transparent;
-            margin-left: 5px;
-        }
-        .timeframe-controls button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-        .timeframe-controls button.active {
-            background: rgba(0, 255, 136, 0.15);
+        .feed-platform {
+            font-size: 12px;
+            background: rgba(0, 255, 136, 0.2);
             color: #00ff88;
-            border-color: #00ff88;
-        }
-
-        .chart-wrapper {
-            flex-grow: 1;
-            position: relative;
-        }
-        .chart-wrapper canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .indicator-card h4, .backtest-card h4, .risk-card h4, .signals-card h4 {
-            color: #0099ff;
-            margin-bottom: 20px;
-            font-size: 18px;
-            border-bottom: 1px solid rgba(0, 153, 255, 0.2);
-            padding-bottom: 10px;
-        }
-
-        .indicator-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
-        .indicator-item {
-            background: rgba(15, 15, 35, 0.6);
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .indicator-item .value {
-            font-size: 24px;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-weight: bold;
-            margin-bottom: 5px;
         }
 
-        .indicator-item .label {
-            font-size: 14px;
-            color: #aaa;
-        }
-        
-        .indicator-item .bullish { color: #00ff88; }
-        .indicator-item .bearish { color: #ff4444; }
-        .indicator-item .neutral { color: #aaa; }
-        
-        .indicator-chart-wrapper {
-            height: 80px;
-            margin-top: 15px;
+        .feed-time {
+            font-size: 12px;
+            color: #888;
         }
 
-        .backtest-form .form-group {
+        .feed-status {
+            font-size: 11px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .feed-content {
+            line-height: 1.5;
             margin-bottom: 15px;
+            color: #eee;
         }
-        .backtest-form label {
-            display: block;
-            color: #ccc;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        .backtest-form input, .backtest-form select {
-            width: 100%;
-            padding: 10px;
-            background: rgba(15, 15, 35, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            color: white;
-        }
-        
-        .backtest-results { margin-top: 20px; }
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .results-grid .metric {
-            background: rgba(15, 15, 35, 0.6);
-            padding: 10px;
-            border-radius: 8px;
-        }
-        .results-grid .metric-label { font-size: 12px; color: #aaa; }
-        .results-grid .metric-value { font-size: 18px; font-weight: bold; }
-        
-        .equity-curve-wrapper { height: 120px; margin-top: 20px; }
 
-        .risk-calculator { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .risk-form, .risk-results { display: flex; flex-direction: column; }
-        #portfolio-allocation-chart { max-height: 120px; margin-top: 15px; }
-
-        .signals-feed {
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 10px;
+        .feed-metrics {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        /* Custom scrollbar */
-        .signals-feed::-webkit-scrollbar { width: 5px; }
-        .signals-feed::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); }
-        .signals-feed::-webkit-scrollbar-thumb { background: #00ff88; }
 
-        .signal-item {
-            padding: 12px;
-            background: rgba(15, 15, 35, 0.7);
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 4px solid;
-            animation: fadeIn 0.5s ease;
+        .metric-badge {
+            font-size: 11px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 4px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .signal-item.bullish { border-left-color: #00ff88; }
-        .signal-item.bearish { border-left-color: #ff4444; }
-        
-        .signal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .signal-header .type { font-weight: bold; }
-        .signal-header .time { font-size: 12px; color: #aaa; }
-        .signal-content { font-size: 14px; }
-        
-        /* RESPONSIVE DESIGN */
-        @media (max-width: 1200px) {
-            .trading-grid {
-                grid-template-columns: 1fr; /* Stack columns on smaller screens */
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7);
             }
-            .main-chart-container, .sidebar-container {
-                grid-column: 1 / -1;
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
             }
-            .chart-card {
-                height: 500px;
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
             }
         }
+
         @media (max-width: 768px) {
-            .chart-header {
+            .controls {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+                align-items: center;
             }
-            .indicator-grid, .risk-calculator {
-                grid-template-columns: 1fr;
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
             }
         }
     </style>
 </head>
 <body>
+    <header class="header">
+        <div class="logo">🚀 CriptoLobits Dashboard v4.0</div>
+        <div class="subtitle">Automatización Social IA Enterprise</div>
+    </header>
 
-<div class="container">
-    <div id="trading" class="section">
-        <h2 class="section-title">💹 Suite de Trading Profesional</h2>
-        
-        <div class="trading-grid">
+    <!-- Navigation Menu -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-item active" onclick="showSection('overview')">🏠 Overview</div>
+            <div class="nav-item" onclick="showSection('oportunidades')">📈 Oportunidades</div>
+            <div class="nav-item" onclick="showSection('social')">👥 Social & OnChain</div>
+            <div class="nav-item" onclick="showSection('trading')">💹 Trading</div>
+            <div class="nav-item" onclick="showSection('scanner')">🔍 Scanner IA</div>
+            <div class="nav-item" onclick="showSection('automatizacion')">🤖 Automatización</div>
+            <div class="nav-item" onclick="showSection('institucional')">🏢 Institucional</div>
+        </div>
+    </nav>
 
-            <div class="main-chart-container">
-                <div class="card chart-card">
-                    <div class="chart-header">
-                        <div class="chart-title">BTC / USDT</div>
-                        <div class="timeframe-controls">
-                            <button class="btn btn-sm active">1H</button>
-                            <button class="btn btn-sm">4H</button>
-                            <button class="btn btn-sm">1D</button>
-                            <button class="btn btn-sm">1W</button>
-                        </div>
+    <div class="container">
+        <!-- Overview Section -->
+        <div id="overview" class="section active">
+            <div class="overview-header">
+                <h1>Dashboard CriptoLobits Enterprise</h1>
+                <p>Plataforma completa de análisis crypto con automatización IA avanzada</p>
+            </div>
+
+            <!-- News Section -->
+            <div class="news-section">
+                <h2>📰 Noticias y Análisis del Día</h2>
+                <div class="news-grid">
+                    <div class="news-item">
+                        <h4>🔥 Bitcoin rompe resistencia en $67,850</h4>
+                        <p>Volumen 2.3x sobre promedio, RSI en 72.4 sugiere momentum alcista confirmado con targets en $71,200.</p>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="mainTradingChart"></canvas>
+                    <div class="news-item">
+                        <h4>📊 Ethereum Layer 2 en expansión</h4>
+                        <p>TVL combinado supera $12.8B, Arbitrum lidera con crecimiento del 23% semanal.</p>
+                    </div>
+                    <div class="news-item">
+                        <h4>🚀 Solana dominando RWAs</h4>
+                        <p>Tokenización de activos reales alcanza $5.2B en volumen, Jupiter DEX procesa $847M en 24h.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="sidebar-container">
+            <!-- Overview Cards -->
+            <div class="dashboard-grid">
+                <div class="card" onclick="showSection('oportunidades')">
+                    <div class="card-header">
+                        <span class="card-icon">📈</span>
+                        <div>
+                            <div class="card-title">Top Oportunidades</div>
+                            <div class="card-subtitle">Análisis de inversión avanzado</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">95/100</span>
+                            <span class="metric-label">Score</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">+24.7%</span>
+                            <span class="metric-label">Retorno 7D</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">247</span>
+                            <span class="metric-label">Analizadas</span>
+                        </div>
+                    </div>
+                    <p>Sistema de scoring multi-factor con backtesting automático.</p>
+                </div>
+
+                <div class="card" onclick="showSection('social')">
+                    <div class="card-header">
+                        <span class="card-icon">👥</span>
+                        <div>
+                            <div class="card-title">Social & OnChain</div>
+                            <div class="card-subtitle">Sentiment y análisis de ballenas</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">78.9%</span>
+                            <span class="metric-label">Sentiment</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">245M</span>
+                            <span class="metric-label">Whale Tx</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">12.3K</span>
+                            <span class="metric-label">Menciones</span>
+                        </div>
+                    </div>
+                    <p>Monitoreo en tiempo real de redes sociales y movimientos OnChain.</p>
+                </div>
+
+                <div class="card" onclick="showSection('automatizacion')">
+                    <div class="card-header">
+                        <span class="card-icon">🤖</span>
+                        <div>
+                            <div class="card-title">Automatización IA</div>
+                            <div class="card-subtitle">Pipeline avanzado social media</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">96.7%</span>
+                            <span class="metric-label">Precisión IA</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">892%</span>
+                            <span class="metric-label">ROI</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">347</span>
+                            <span class="metric-label">Signals</span>
+                        </div>
+                    </div>
+                    <p>Pipeline completo IA con analytics en tiempo real.</p>
+                </div>
+
+                <div class="card" onclick="showSection('trading')">
+                    <div class="card-header">
+                        <span class="card-icon">💹</span>
+                        <div>
+                            <div class="card-title">Trading & Análisis</div>
+                            <div class="card-subtitle">Suite profesional de trading</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">1.34</span>
+                            <span class="metric-label">Sharpe</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">67.3%</span>
+                            <span class="metric-label">Win Rate</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">-12.4%</span>
+                            <span class="metric-label">Max DD</span>
+                        </div>
+                    </div>
+                    <p>Indicadores avanzados con backtesting y gestión de riesgo.</p>
+                </div>
+
+                <div class="card" onclick="showSection('scanner')">
+                    <div class="card-header">
+                        <span class="card-icon">🔍</span>
+                        <div>
+                            <div class="card-title">Scanner IA</div>
+                            <div class="card-subtitle">Anti-rugpull y análisis de riesgo</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">87/100</span>
+                            <span class="metric-label">Liquidity</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">Low</span>
+                            <span class="metric-label">Risk</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">156</span>
+                            <span class="metric-label">Scanned</span>
+                        </div>
+                    </div>
+                    <p>Análisis automático de contratos con IA para detectar riesgos.</p>
+                </div>
+
+                <div class="card" onclick="showSection('institucional')">
+                    <div class="card-header">
+                        <span class="card-icon">🏢</span>
+                        <div>
+                            <div class="card-title">Institucional</div>
+                            <div class="card-subtitle">Servicios enterprise 24/7</div>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-value">24/7</span>
+                            <span class="metric-label">Soporte</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">99.9%</span>
+                            <span class="metric-label">SLA</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">API</span>
+                            <span class="metric-label">Access</span>
+                        </div>
+                    </div>
+                    <p>Soluciones personalizadas para fondos e instituciones.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Automation Section -->
+        <div id="automatizacion" class="section">
+            <div class="automation-section">
+                <h2 class="section-title">🤖 Automatización Social IA Enterprise</h2>
+                <p style="text-align: center; color: #ccc; margin-bottom: 30px;">
+                    Pipeline inteligente completo con Gemini Pro + Santiment API + Google Cloud Vision
+                </p>
                 
-                <div class="card indicator-card">
-                    <h4>📊 Indicadores Técnicos</h4>
-                    <div class="indicator-grid">
-                        <div class="indicator-item">
-                            <div class="label">RSI (14)</div>
-                            <div class="value" id="rsi-value">--</div>
-                            <div class="indicator-chart-wrapper"><canvas id="rsiChart"></canvas></div>
+                <div class="controls">
+                    <button class="btn btn-primary pulse" onclick="startPipeline()">🚀 Iniciar Pipeline IA</button>
+                    <button class="btn btn-secondary" onclick="showAnalytics()">📊 Analytics Tiempo Real</button>
+                    <button class="btn btn-secondary" onclick="showPredictions()">🎯 Predicciones IA</button>
+                    <button class="btn btn-secondary" onclick="showAdvanced()">🧠 Configuración Avanzada</button>
+                </div>
+
+                <!-- Real-time Metrics Dashboard -->
+                <div class="realtime-metrics">
+                    <h3 style="text-align: center; color: #00ff88; margin-bottom: 20px;">📊 Métricas en Tiempo Real</h3>
+                    <div class="metrics-grid-live">
+                        <div class="metric-card-live">
+                            <div class="metric-icon">🚀</div>
+                            <div class="metric-content">
+                                <div class="metric-title">Performance Global</div>
+                                <div class="metric-value" id="global-perf">+67.3%</div>
+                                <div class="metric-trend">↗️ +5.2% vs ayer</div>
+                            </div>
                         </div>
-                        <div class="indicator-item">
-                            <div class="label">MACD (12, 26, 9)</div>
-                            <div class="value" id="macd-value">--</div>
-                            <div class="indicator-chart-wrapper"><canvas id="macdChart"></canvas></div>
+                        <div class="metric-card-live">
+                            <div class="metric-icon">⚡</div>
+                            <div class="metric-content">
+                                <div class="metric-title">Engagement Rate</div>
+                                <div class="metric-value" id="engagement-live">94.1%</div>
+                                <div class="metric-trend">↗️ +2.8% vs ayer</div>
+                            </div>
                         </div>
-                         <div class="indicator-item">
-                            <div class="label">Moving Average (50)</div>
-                            <div class="value neutral" id="ma50-value">--</div>
+                        <div class="metric-card-live">
+                            <div class="metric-icon">🎯</div>
+                            <div class="metric-content">
+                                <div class="metric-title">Precisión IA</div>
+                                <div class="metric-value" id="ai-precision">96.7%</div>
+                                <div class="metric-trend">↗️ +1.4% vs ayer</div>
+                            </div>
                         </div>
-                        <div class="indicator-item">
-                            <div class="label">Bollinger Bands®</div>
-                            <div class="value neutral" id="bb-value">--</div>
+                        <div class="metric-card-live">
+                            <div class="metric-icon">💰</div>
+                            <div class="metric-content">
+                                <div class="metric-title">ROI Instantáneo</div>
+                                <div class="metric-value" id="roi-live">892%</div>
+                                <div class="metric-trend">↗️ +45% vs manual</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card backtest-card">
-                    <h4>⚙️ Sistema de Backtesting</h4>
-                    <div class="backtest-form">
-                        <div class="form-group">
-                            <label for="strategy">Estrategia</label>
-                            <select id="strategy">
-                                <option value="ma_crossover">Cruce de Medias Móviles</option>
-                                <option value="rsi_momentum">Momentum con RSI</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                             <label for="capital">Capital Inicial (USDT)</label>
-                             <input type="number" id="capital" value="10000">
-                        </div>
-                        <button class="btn btn-primary" id="runBacktestBtn">Ejecutar Backtest</button>
-                    </div>
-                    <div class="backtest-results">
-                        <div class="results-grid">
-                            <div class="metric"><span class="metric-label">Rentabilidad Final</span><span class="metric-value" id="backtest-return">--</span></div>
-                            <div class="metric"><span class="metric-label">Sharpe Ratio</span><span class="metric-value" id="backtest-sharpe">--</span></div>
-                            <div class="metric"><span class="metric-label">Max Drawdown</span><span class="metric-value" id="backtest-drawdown">--</span></div>
-                            <div class="metric"><span class="metric-label">Win Rate</span><span class="metric-value" id="backtest-winrate">--</span></div>
-                        </div>
-                        <div class="equity-curve-wrapper"><canvas id="equityCurveChart"></canvas></div>
-                    </div>
-                </div>
-                
-                <div class="card risk-card">
-                    <h4>⚖️ Gestión de Riesgo</h4>
-                    <div class="risk-calculator">
-                        <div class="risk-form">
-                            <div class="form-group">
-                                <label>Capital Total (USDT)</label>
-                                <input type="number" id="risk-capital" value="10000">
+                <!-- Pipeline Status Advanced -->
+                <div class="pipeline-status-advanced">
+                    <h3 style="text-align: center; color: #00ff88; margin-bottom: 20px;">🧠 Pipeline IA Avanzado en Vivo</h3>
+                    <div class="pipeline-steps-grid">
+                        <div class="pipeline-step-card active" id="step-data">
+                            <div class="step-header">
+                                <span class="step-icon">📊</span>
+                                <div class="step-pulse"></div>
+                                <div class="step-status-dot"></div>
                             </div>
-                            <div class="form-group">
-                                <label>Riesgo por Operación (%)</label>
-                                <input type="number" id="risk-percent" value="1">
-                            </div>
-                             <div class="form-group">
-                                <label>Precio de Entrada</label>
-                                <input type="number" id="risk-entry" value="68500">
-                            </div>
-                            <div class="form-group">
-                                <label>Stop Loss</label>
-                                <input type="number" id="risk-sl" value="67800">
+                            <div class="step-body">
+                                <h4>Análisis Multi-Source</h4>
+                                <p>Procesando 347 signals en tiempo real</p>
+                                <div class="progress-bar-advanced">
+                                    <div class="progress-fill-advanced" style="width: 89%"></div>
+                                </div>
+                                <div class="step-details">
+                                    <span class="detail-item">✅ Santiment API</span>
+                                    <span class="detail-item">✅ CoinGecko</span>
+                                    <span class="detail-item">🔄 OnChain</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="risk-results">
-                             <div class="metric"><span class="metric-label">Pérdida Máxima</span><span class="metric-value" id="risk-max-loss">--</span></div>
-                             <div class="metric"><span class="metric-label">Tamaño de Posición</span><span class="metric-value" id="risk-position-size">--</span></div>
-                             <div id="portfolio-allocation-chart">
-                                <canvas id="riskDonutChart"></canvas>
-                             </div>
+
+                        <div class="pipeline-step-card active" id="step-ai">
+                            <div class="step-header">
+                                <span class="step-icon">🧠</span>
+                                <div class="step-pulse"></div>
+                                <div class="step-status-dot"></div>
+                            </div>
+                            <div class="step-body">
+                                <h4>Generación IA Contextual</h4>
+                                <p>Gemini Pro + Claude generando contenido</p>
+                                <div class="progress-bar-advanced">
+                                    <div class="progress-fill-advanced" style="width: 76%"></div>
+                                </div>
+                                <div class="step-details">
+                                    <span class="detail-item">Templates: 12</span>
+                                    <span class="detail-item">Tono: Profesional</span>
+                                    <span class="detail-item">Idioma: ES/EN</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pipeline-step-card active" id="step-sentiment">
+                            <div class="step-header">
+                                <span class="step-icon">💭</span>
+                                <div class="step-pulse"></div>
+                                <div class="step-status-dot"></div>
+                            </div>
+                            <div class="step-body">
+                                <h4>Análisis de Sentiment</h4>
+                                <p>Optimizando tono según audiencia</p>
+                                <div class="progress-bar-advanced">
+                                    <div class="progress-fill-advanced" style="width: 92%"></div>
+                                </div>
+                                <div class="step-details">
+                                    <span class="detail-item">Score: 0.84</span>
+                                    <span class="detail-item">Engagement: 94.1%</span>
+                                    <span class="detail-item">Optimizado: ✅</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pipeline-step-card active" id="step-schedule">
+                            <div class="step-header">
+                                <span class="step-icon">⏰</span>
+                                <div class="step-pulse"></div>
+                                <div class="step-status-dot"></div>
+                            </div>
+                            <div class="step-body">
+                                <h4>Programación Inteligente</h4>
+                                <p>Optimizando timing por red social</p>
+                                <div class="progress-bar-advanced">
+                                    <div class="progress-fill-advanced" style="width: 95%"></div>
+                                </div>
+                                <div class="step-details">
+                                    <span class="detail-item">Próximo: 16:47</span>
+                                    <span class="detail-item">Red: Twitter</span>
+                                    <span class="detail-item">Est: 96.3%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card signals-card">
-                    <h4>⚡ Señales de Trading (Simuladas)</h4>
-                    <div class="signals-feed" id="signals-feed">
+                <!-- Social Networks Enhanced -->
+                <div class="social-networks">
+                    <div class="network-card telegram">
+                        <div class="network-header">
+                            <span class="network-icon">📱</span>
+                            <span class="network-name">Telegram</span>
+                            <div class="status-dot pulse-dot"></div>
                         </div>
+                        <div class="network-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="telegram-members">15.2K</span>
+                                <span class="stat-label">Miembros</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="telegram-posts">247</span>
+                                <span class="stat-label">Posts hoy</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="telegram-engagement">89.3%</span>
+                                <span class="stat-label">Engagement</span>
+                            </div>
+                        </div>
+                        <div class="network-config">
+                            <p><strong>Configuración Inteligente:</strong></p>
+                            <p>📅 <strong>Frecuencia:</strong> 8 posts/día óptimos</p>
+                            <p>⏰ <strong>Horarios:</strong> 9:30, 14:00, 18:30</p>
+                            <p>📝 <strong>Contenido:</strong> Análisis + Alertas + Gráficas</p>
+                            <p>🎯 <strong>Engagement predicho:</strong> 91.2%</p>
+                        </div>
+                    </div>
+
+                    <div class="network-card twitter">
+                        <div class="network-header">
+                            <span class="network-icon">🐦</span>
+                            <span class="network-name">Twitter / X</span>
+                            <div class="status-dot pulse-dot"></div>
+                        </div>
+                        <div class="network-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="twitter-followers">42.7K</span>
+                                <span class="stat-label">Seguidores</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="twitter-tweets">156</span>
+                                <span class="stat-label">Tweets hoy</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="twitter-engagement">94.1%</span>
+                                <span class="stat-label">Engagement</span>
+                            </div>
+                        </div>
+                        <div class="network-config">
+                            <p><strong>Configuración Inteligente:</strong></p>
+                            <p>📅 <strong>Frecuencia:</strong> 12 tweets/día</p>
+                            <p>⏰ <strong>Horarios:</strong> 8:00, 12:30, 16:45, 20:00</p>
+                            <p>📝 <strong>Contenido:</strong> Threads + Charts + Polls</p>
+                            <p>🎯 <strong>Engagement predicho:</strong> 96.8%</p>
+                        </div>
+                    </div>
+
+                    <div class="network-card instagram">
+                        <div class="network-header">
+                            <span class="network-icon">📷</span>
+                            <span class="network-name">Instagram</span>
+                            <div class="status-dot warning-dot"></div>
+                        </div>
+                        <div class="network-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="instagram-followers">8.3K</span>
+                                <span class="stat-label">Seguidores</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="instagram-posts">3</span>
+                                <span class="stat-label">Posts/día</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">--</span>
+                                <span class="stat-label">Configurando</span>
+                            </div>
+                        </div>
+                        <div class="network-config">
+                            <p><strong>Configuración Planeada:</strong></p>
+                            <p>📅 <strong>Frecuencia:</strong> 3 posts/día</p>
+                            <p>⏰ <strong>Horarios:</strong> 10:00, 15:00, 19:30</p>
+                            <p>📝 <strong>Contenido:</strong> Charts + Infografías + Stories</p>
+                            <p>🎯 <strong>Engagement estimado:</strong> 88.9%</p>
+                            <button class="btn btn-secondary" onclick="connectInstagram()" style="margin-top: 15px; width: 100%;">🔗 Conectar Instagram API</button>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Live Content Feed Enhanced -->
+                <div class="live-feed">
+                    <h3>🔥 Contenido Generándose en Vivo</h3>
+                    <div class="feed-controls">
+                        <button class="btn btn-secondary btn-sm" onclick="pauseGeneration()">⏸️ Pausar</button>
+                        <button class="btn btn-secondary btn-sm" onclick="generateNow()">⚡ Generar Ahora</button>
+                        <button class="btn btn-secondary btn-sm" onclick="clearFeed()">🗑️ Limpiar</button>
+                    </div>
+                    <div id="liveFeed">
+                        <div class="feed-item">
+                            <div class="feed-header">
+                                <span class="feed-platform">📱 TELEGRAM</span>
+                                <span class="feed-time">En 3 min</span>
+                                <span class="feed-status">🟢 Programado</span>
+                            </div>
+                            <div class="feed-content">
+                                🔥 <strong>SOLANA BREAKING:</strong> TVL en protocolos DeFi alcanza $2.8B (+34% 7d)<br>
+                                📊 Jupiter lidera con $847M en volumen diario<br>
+                                🚀 Predicción IA: Momentum continuará próximas 72h<br>
+                                💡 <em>¿Cuál es tu protocolo SOL favorito? Comenta 👇</em>
+                            </div>
+                            <div class="feed-metrics">
+                                <span class="metric-badge">🎯 Est. Engagement: 91.2%</span>
+                                <span class="metric-badge">👥 Alcance: 12.4K</span>
+                                <span class="metric-badge">💭 Sentiment: 0.87</span>
+                            </div>
+                        </div>
+
+                        <div class="feed-item">
+                            <div class="feed-header">
+                                <span class="feed-platform">🐦 TWITTER</span>
+                                <span class="feed-time">En 7 min</span>
+                                <span class="feed-status">🟢 Programado</span>
+                            </div>
+                            <div class="feed-content">
+                                🧵 <strong>THREAD: Por qué ETH Layer 2s están ganando la guerra de escalabilidad</strong><br><br>
+                                1/8 TVL combinado supera $12.8B por primera vez en la historia<br>
+                                📈 ARB: +23% | OP: +18% | MATIC: +15% (última semana)<br>
+                                🎯 Siguiente: Análisis profundo de flujos institucionales...<br>
+                                🔄 RT si crees que L2s dominarán 2024
+                            </div>
+                            <div class="feed-metrics">
+                                <span class="metric-badge">🎯 Est. Engagement: 96.8%</span>
+                                <span class="metric-badge">🔄 Retweets Est: 234</span>
+                                <span class="metric-badge">💬 Replies Est: 89</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Sections -->
+        <div id="oportunidades" class="section">
+            <div style="text-align: center; padding: 60px 20px;">
+                <h2>🚧 Sección en Desarrollo</h2>
+                <p>Esta sección estará disponible próximamente con análisis avanzado de oportunidades de inversión.</p>
+            </div>
+        </div>
+
+        <div id="social" class="section">
+            <div style="text-align: center; padding: 60px 20px;">
+                <h2>🚧 Sección en Desarrollo</h2>
+                <p>Dashboard de sentiment social y análisis OnChain en desarrollo.</p>
+            </div>
+        </div>
+
+        <div id="trading" class="section">
+            <div style="text-align: center; padding: 60px 20px;">
+                <h2>🚧 Sección en Desarrollo</h2>
+                <p>Suite de trading profesional con backtesting próximamente.</p>
+            </div>
+        </div>
+
+        <div id="scanner" class="section">
+            <div style="text-align: center; padding: 60px 20px;">
+                <h2>🚧 Sección en Desarrollo</h2>
+                <p>Scanner IA anti-rugpull en desarrollo avanzado.</p>
+            </div>
+        </div>
+
+        <div id="institucional" class="section">
+            <div style="text-align: center; padding: 60px 20px;">
+                <h2>🏢 Servicios Institucionales Enterprise</h2>
+                <p>Soluciones personalizadas para fondos de inversión y empresas crypto</p>
+                <div style="margin-top: 30px; color: #00ff88;">
+                    <p>📧 enterprise@criptolobits.com</p>
+                    <p>📱 +1-800-CRYPTO-AI</p>
+                    <p>🏛️ Soporte 24/7 | SLA 99.9% | API Access</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- CONFIGURACIÓN Y COLORES ---
-    const BULL_COLOR = '#00ff88';
-    const BEAR_COLOR = '#ff4444';
-    const NEUTRAL_COLOR = '#0099ff';
-    const GRID_COLOR = 'rgba(255, 255, 255, 0.1)';
+    <script>
+        let pipelineActive = false;
+        let updateInterval;
+        let metricsInterval;
+        let contentGenerationPaused = false;
 
-    // --- GENERACIÓN DE DATOS SIMULADOS ---
-    function generateCandlestickData(days) {
-        let date = new Date();
-        date.setDate(date.getDate() - days);
-        let price = 65000;
-        const data = [];
-        for (let i = 0; i < days; i++) {
-            const open = price + (Math.random() - 0.5) * 500;
-            const close = open + (Math.random() - 0.5) * 1000;
-            const high = Math.max(open, close) + Math.random() * 500;
-            const low = Math.min(open, close) - Math.random() * 500;
-            const volume = Math.random() * 1000 + 500;
-            data.push({
-                x: date.getTime(),
-                o: open,
-                h: high,
-                l: low,
-                c: close,
-                v: volume
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
             });
-            price = close;
-            date.setDate(date.getDate() + 1);
-        }
-        return data;
-    }
-
-    const rawData = generateCandlestickData(365); // Generar 1 año de datos para filtrar por timeframe
-
-    // --- CÁLCULO DE INDICADORES ---
-    const calculateMA = (data, period) => {
-        const result = [];
-        for (let i = period - 1; i < data.length; i++) {
-            const sum = data.slice(i - period + 1, i + 1).reduce((acc, val) => acc + val.c, 0);
-            result.push({ x: data[i].x, y: sum / period });
-        }
-        return result;
-    };
-
-    const calculateBollingerBands = (data, period, stdDev) => {
-        const ma = calculateMA(data, period).map(d => d.y);
-        const upper = [];
-        const lower = [];
-        for (let i = period - 1; i < data.length; i++) {
-            const slice = data.slice(i - period + 1, i + 1).map(d => d.c);
-            const mean = ma[i - period + 1];
-            const variance = slice.reduce((acc, val) => acc + (val - mean) ** 2, 0) / period;
-            const sd = Math.sqrt(variance);
-            upper.push({ x: data[i].x, y: mean + stdDev * sd });
-            lower.push({ x: data[i].x, y: mean - stdDev * sd });
-        }
-        return { upper, lower };
-    };
-    
-    const calculateRSI = (data, period = 14) => {
-        const rsiData = [];
-        let avgGain = 0, avgLoss = 0;
-        for (let i = 1; i < data.length; i++) {
-            const change = data[i].c - data[i-1].c;
-            const gain = change > 0 ? change : 0;
-            const loss = change < 0 ? -change : 0;
-
-            if (i < period) {
-                avgGain += gain;
-                avgLoss += loss;
-                continue;
+            
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show target section
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
             }
-            if (i === period) {
-                avgGain /= period;
-                avgLoss /= period;
+            
+            // Mark corresponding nav item as active
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.textContent.toLowerCase().includes(sectionId) || 
+                    (sectionId === 'overview' && item.textContent.includes('Overview')) ||
+                    (sectionId === 'oportunidades' && item.textContent.includes('Oportunidades')) ||
+                    (sectionId === 'social' && item.textContent.includes('Social')) ||
+                    (sectionId === 'trading' && item.textContent.includes('Trading')) ||
+                    (sectionId === 'scanner' && item.textContent.includes('Scanner')) ||
+                    (sectionId === 'automatizacion' && item.textContent.includes('Automatización')) ||
+                    (sectionId === 'institucional' && item.textContent.includes('Institucional'))) {
+                    item.classList.add('active');
+                }
+            });
+            
+            console.log(`Showing section: ${sectionId}`);
+            showNotification(`📱 Navegando a: ${sectionId}`);
+        }
+
+        function startPipeline() {
+            console.log('🚀 Starting advanced AI pipeline...');
+            pipelineActive = true;
+            
+            showNotification('🚀 Pipeline IA iniciado exitosamente');
+            
+            // Sequence of notifications
+            setTimeout(() => {
+                showNotification('📊 Analizando 347 señales multi-source...');
+            }, 2000);
+            
+            setTimeout(() => {
+                showNotification('🧠 Gemini Pro + Claude generando contenido...');
+            }, 4000);
+            
+            setTimeout(() => {
+                showNotification('💭 Optimizando sentiment y engagement...');
+            }, 6000);
+            
+            setTimeout(() => {
+                showNotification('📅 538 posts optimizados programados');
+            }, 8000);
+
+            // Start all real-time updates
+            startRealTimeMetrics();
+            startLiveUpdates();
+            updatePipelineStatus();
+        }
+
+        function startRealTimeMetrics() {
+            if (metricsInterval) clearInterval(metricsInterval);
+            
+            metricsInterval = setInterval(() => {
+                updateLiveMetrics();
+            }, 3000);
+        }
+
+        function updateLiveMetrics() {
+            // Performance
+            const globalPerf = document.getElementById('global-perf');
+            const engagementLive = document.getElementById('engagement-live');
+            const aiPrecision = document.getElementById('ai-precision');
+            const roiLive = document.getElementById('roi-live');
+            
+            if (globalPerf) {
+                const newValue = (Math.random() * 5 + 65).toFixed(1);
+                globalPerf.textContent = `+${newValue}%`;
+            }
+            
+            if (engagementLive) {
+                const newValue = (Math.random() * 3 + 93).toFixed(1);
+                engagementLive.textContent = `${newValue}%`;
+            }
+            
+            if (aiPrecision) {
+                const newValue = (Math.random() * 2 + 95).toFixed(1);
+                aiPrecision.textContent = `${newValue}%`;
+            }
+            
+            if (roiLive) {
+                const newValue = Math.floor(Math.random() * 100 + 850);
+                roiLive.textContent = `${newValue}%`;
+            }
+
+            // Update social network stats
+            updateNetworkStats();
+        }
+
+        function updateNetworkStats() {
+            // Telegram stats
+            const telegramMembers = document.getElementById('telegram-members');
+            const telegramPosts = document.getElementById('telegram-posts');
+            const telegramEngagement = document.getElementById('telegram-engagement');
+            
+            if (telegramMembers) {
+                const variation = Math.random() * 100;
+                telegramMembers.textContent = `${(15.2 + variation/1000).toFixed(1)}K`;
+            }
+            
+            if (telegramPosts) {
+                telegramPosts.textContent = Math.floor(Math.random() * 50 + 230);
+            }
+            
+            if (telegramEngagement) {
+                const engagement = (Math.random() * 5 + 87).toFixed(1);
+                telegramEngagement.textContent = `${engagement}%`;
+            }
+
+            // Twitter stats
+            const twitterFollowers = document.getElementById('twitter-followers');
+            const twitterTweets = document.getElementById('twitter-tweets');
+            const twitterEngagement = document.getElementById('twitter-engagement');
+            
+            if (twitterFollowers) {
+                const variation = Math.random() * 200;
+                twitterFollowers.textContent = `${(42.7 + variation/1000).toFixed(1)}K`;
+            }
+            
+            if (twitterTweets) {
+                twitterTweets.textContent = Math.floor(Math.random() * 30 + 140);
+            }
+            
+            if (twitterEngagement) {
+                const engagement = (Math.random() * 4 + 92).toFixed(1);
+                twitterEngagement.textContent = `${engagement}%`;
+            }
+
+            // Instagram stats  
+            const instagramFollowers = document.getElementById('instagram-followers');
+            const instagramPosts = document.getElementById('instagram-posts');
+            
+            if (instagramFollowers) {
+                const variation = Math.random() * 50;
+                instagramFollowers.textContent = `${(8.3 + variation/1000).toFixed(1)}K`;
+            }
+            
+            if (instagramPosts) {
+                instagramPosts.textContent = Math.floor(Math.random() * 2 + 2);
+            }
+        }
+
+        function updatePipelineStatus() {
+            const steps = document.querySelectorAll('.pipeline-step-card');
+            let delay = 0;
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    step.classList.add('active');
+                    const progressBar = step.querySelector('.progress-fill-advanced');
+                    if (progressBar) {
+                        const targetWidths = [89, 76, 92, 95];
+                        const randomVariation = Math.random() * 8 - 4; // ±4%
+                        const finalWidth = Math.min(100, Math.max(0, targetWidths[index] + randomVariation));
+                        progressBar.style.width = finalWidth + '%';
+                    }
+                }, delay);
+                delay += 1000;
+            });
+        }
+
+        function startLiveUpdates() {
+            if (updateInterval) clearInterval(updateInterval);
+            
+            updateInterval = setInterval(() => {
+                if (!contentGenerationPaused) {
+                    generateNewContent();
+                }
+            }, 12000); // Every 12 seconds
+        }
+
+        function generateNewContent() {
+            const contentTemplates = [
+                {
+                    platform: '📱 TELEGRAM',
+                    time: 'En 2 min',
+                    status: '🟢 Programado',
+                    content: '⚡ <strong>ETHEREUM UPDATE:</strong> Gas fees en mínimos de 6 meses<br>📈 L2s procesando 89% del volumen total<br>💡 Optimism y Arbitrum lideran adopción institucional<br>🎯 <em>¿Cuál L2 usas más frecuentemente? 🤔</em>',
+                    metrics: ['🎯 Est. Engagement: 88.4%', '👥 Alcance: 13.7K', '💭 Sentiment: 0.82']
+                },
+                {
+                    platform: '🐦 TWITTER',
+                    time: 'En 5 min',
+                    status: '🟢 Programado',
+                    content: '📊 <strong>GRÁFICA:</strong> Correlación BTC vs índices tradicionales en mínimos históricos<br><br>🎯 ¿Descorrelación real o temporal?<br>📈 Análisis técnico completo en thread...<br>🔥 RT si crees en la independencia de Bitcoin',
+                    metrics: ['🎯 Est. Engagement: 94.2%', '🔄 Retweets Est: 189', '💬 Replies Est: 67']
+                },
+                {
+                    platform: '📷 INSTAGRAM',
+                    time: 'En 8 min',
+                    status: '🟡 Generando',
+                    content: '📊 <strong>INFOGRAFÍA AUTOMÁTICA:</strong><br>"Top 10 DeFi Protocols por TVL"<br><br>🎨 Diseño auto-generado con Google Cloud Vision<br>📈 Datos en tiempo real desde DeFiLlama<br>#DeFi #CryptoAnalysis #DataVisualization',
+                    metrics: ['🎯 Est. Likes: 524', '💬 Comments Est: 31', '📤 Shares Est: 18']
+                },
+                {
+                    platform: '📱 TELEGRAM',
+                    time: 'En 12 min',
+                    status: '🟢 Programado',
+                    content: '🚨 <strong>BITCOIN ALERT:</strong> Resistencia clave en $68,200<br>📊 Volume profile sugiere breakout inminente<br>🎯 Target técnico: $72,800 (Fibonacci 1.618)<br>⚡ <em>¿BTC rompiendo hacia nuevos ATH? 🚀</em>',
+                    metrics: ['🎯 Est. Engagement: 93.1%', '👥 Alcance: 14.2K', '💭 Sentiment: 0.91']
+                }
+            ];
+
+            const randomContent = contentTemplates[Math.floor(Math.random() * contentTemplates.length)];
+            
+            const liveFeed = document.getElementById('liveFeed');
+            if (liveFeed) {
+                const newItem = document.createElement('div');
+                newItem.className = 'feed-item';
+                newItem.style.opacity = '0';
+                newItem.style.transform = 'translateY(20px)';
+                
+                newItem.innerHTML = `
+                    <div class="feed-header">
+                        <span class="feed-platform">${randomContent.platform}</span>
+                        <span class="feed-time">${randomContent.time}</span>
+                        <span class="feed-status">${randomContent.status}</span>
+                    </div>
+                    <div class="feed-content">${randomContent.content}</div>
+                    <div class="feed-metrics">
+                        ${randomContent.metrics.map(metric => `<span class="metric-badge">${metric}</span>`).join('')}
+                    </div>
+                `;
+                
+                liveFeed.insertBefore(newItem, liveFeed.firstChild);
+                
+                // Animate in
+                setTimeout(() => {
+                    newItem.style.transition = 'all 0.5s ease';
+                    newItem.style.opacity = '1';
+                    newItem.style.transform = 'translateY(0)';
+                }, 100);
+                
+                // Keep only last 4 items
+                const items = liveFeed.querySelectorAll('.feed-item');
+                if (items.length > 4) {
+                    const oldItem = items[items.length - 1];
+                    oldItem.style.transition = 'all 0.3s ease';
+                    oldItem.style.opacity = '0';
+                    oldItem.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        if (oldItem.parentElement) {
+                            oldItem.remove();
+                        }
+                    }, 300);
+                }
+            }
+        }
+
+        // Enhanced control functions
+        function pauseGeneration() {
+            contentGenerationPaused = !contentGenerationPaused;
+            const button = event.target;
+            if (contentGenerationPaused) {
+                button.innerHTML = '▶️ Reanudar';
+                showNotification('⏸️ Generación de contenido pausada');
             } else {
-                avgGain = (avgGain * (period - 1) + gain) / period;
-                avgLoss = (avgLoss * (period - 1) + loss) / period;
+                button.innerHTML = '⏸️ Pausar';
+                showNotification('▶️ Generación de contenido reanudada');
             }
-            const rs = avgGain / avgLoss;
-            const rsi = 100 - (100 / (1 + rs));
-            rsiData.push({x: data[i].x, y: rsi});
         }
-        return rsiData;
-    };
 
-    const calculateEMA = (data, period) => {
-        const k = 2 / (period + 1);
-        const emaData = [];
-        let ema = data[0].c;
-        emaData.push({x: data[0].x, y: ema});
-        for(let i=1; i < data.length; i++){
-            ema = data[i].c * k + ema * (1-k);
-            emaData.push({x: data[i].x, y: ema});
+        function generateNow() {
+            if (!contentGenerationPaused) {
+                generateNewContent();
+                showNotification('⚡ Contenido generado manualmente');
+            } else {
+                showNotification('⚠️ Primero debes reanudar la generación');
+            }
         }
-        return emaData;
-    }
 
-    const calculateMACD = (data, short=12, long=26, signal=9) => {
-        const emaLong = calculateEMA(data, long);
-        const emaShort = calculateEMA(data, short);
-        const macdLine = emaShort.map((val, i) => ({x: val.x, y: val.y - emaLong[i].y}));
-        const signalLine = calculateEMA(macdLine.map(d => ({c: d.y, x:d.x})), signal);
-        const histogram = macdLine.map((val, i) => ({x: val.x, y: val.y - signalLine[i].y}));
-        return {macdLine, signalLine, histogram};
-    }
+        function clearFeed() {
+            const liveFeed = document.getElementById('liveFeed');
+            if (liveFeed) {
+                liveFeed.innerHTML = '';
+                showNotification('🗑️ Feed de contenido limpiado');
+            }
+        }
 
-    const tradingData = rawData.slice(-90); // Usar los últimos 90 días para las gráficas
-    const ma50 = calculateMA(tradingData, 50);
-    const bollingerBands = calculateBollingerBands(tradingData, 20, 2);
-    const rsiData = calculateRSI(tradingData);
-    const macdData = calculateMACD(tradingData);
+        function showAnalytics() {
+            showNotification('📊 Abriendo analytics avanzado en tiempo real...');
+            console.log('Advanced analytics dashboard would open here');
+        }
 
-    // --- GRÁFICA PRINCIPAL ---
-    const mainChartCtx = document.getElementById('mainTradingChart').getContext('2d');
-    const mainTradingChart = new Chart(mainChartCtx, {
-        type: 'candlestick',
-        data: {
-            datasets: [{
-                label: 'BTC/USDT',
-                data: tradingData,
-                borderColor: NEUTRAL_COLOR,
-                color: {
-                    up: BULL_COLOR,
-                    down: BEAR_COLOR,
-                    unchanged: '#999',
+        function showPredictions() {
+            showNotification('🎯 Cargando predicciones IA con machine learning...');
+            console.log('AI predictions panel would open here');
+        }
+
+        function showAdvanced() {
+            showNotification('🧠 Accediendo a configuración IA avanzada...');
+            console.log('Advanced AI configuration would open here');
+        }
+
+        function connectInstagram() {
+            showNotification('🔗 Conectando con Instagram Business API...');
+            
+            // Simulate connection process
+            setTimeout(() => {
+                showNotification('🔄 Autenticando credenciales...');
+            }, 2000);
+            
+            setTimeout(() => {
+                showNotification('📊 Analizando perfil y métricas...');
+            }, 4000);
+            
+            setTimeout(() => {
+                showNotification('✅ Instagram conectado exitosamente');
+                
+                // Update Instagram card status
+                const instagramCard = document.querySelector('.network-card.instagram');
+                if (instagramCard) {
+                    const statusDot = instagramCard.querySelector('.warning-dot');
+                    if (statusDot) {
+                        statusDot.classList.remove('warning-dot');
+                        statusDot.classList.add('pulse-dot');
+                        statusDot.style.background = '#00ff88';
+                        statusDot.style.boxShadow = '0 0 10px #00ff88';
+                    }
+                    
+                    const connectButton = instagramCard.querySelector('button');
+                    if (connectButton) {
+                        connectButton.innerHTML = '✅ Conectado';
+                        connectButton.style.background = 'rgba(0, 255, 136, 0.2)';
+                        connectButton.style.border = '1px solid #00ff88';
+                        connectButton.style.color = '#00ff88';
+                        connectButton.disabled = true;
+                    }
                 }
-            }, {
-                type: 'line',
-                label: 'MA 50',
-                data: ma50,
-                borderColor: '#ffc107',
-                borderWidth: 1.5,
-                pointRadius: 0
-            }, {
-                type: 'line',
-                label: 'BB Upper',
-                data: bollingerBands.upper,
-                borderColor: 'rgba(0,153,255, 0.5)',
-                borderWidth: 1,
-                pointRadius: 0,
-                fill: '+1'
-            }, {
-                type: 'line',
-                label: 'BB Lower',
-                data: bollingerBands.lower,
-                borderColor: 'rgba(0,153,255, 0.5)',
-                borderWidth: 1,
-                pointRadius: 0,
-                backgroundColor: 'rgba(0,153,255, 0.1)',
-                fill: false
-            }, {
-                type: 'bar',
-                label: 'Volume',
-                data: tradingData.map(d => ({x: d.x, y: d.v})),
-                backgroundColor: (ctx) => (ctx.raw.c > ctx.raw.o ? 'rgba(0, 255, 136, 0.5)' : 'rgba(255, 68, 68, 0.5)'),
-                yAxisID: 'y_volume'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: { unit: 'day' },
-                    grid: { color: GRID_COLOR },
-                    ticks: { color: '#ccc' }
+            }, 6000);
+        }
+
+        function showAnalytics() {
+            showNotification('📊 Mostrando analytics en tiempo real...');
+            console.log('Analytics dashboard opened');
+        }
+
+        function showPredictions() {
+            showNotification('🎯 Cargando predicciones IA avanzadas...');
+            console.log('Predictions panel opened');
+        }
+
+        function showAdvanced() {
+            showNotification('🧠 Abriendo configuración avanzada...');
+            console.log('Advanced configuration opened');
+        }
+
+        function connectInstagram() {
+            showNotification('🔗 Conectando con Instagram API...');
+            setTimeout(() => {
+                showNotification('✅ Instagram conectado exitosamente');
+            }, 3000);
+        }
+
+        function startLiveUpdates() {
+            if (updateInterval) clearInterval(updateInterval);
+            
+            updateInterval = setInterval(() => {
+                updateLiveFeed();
+            }, 8000);
+        }
+
+        function updateLiveFeed() {
+            const feedContents = [
+                {
+                    platform: '📱 TELEGRAM',
+                    time: 'En 2 min',
+                    content: '⚡ <strong>ETHEREUM UPDATE:</strong> Gas fees en mínimos de 6 meses<br>📈 L2s procesando 89% del volumen total<br>💡 Optimism y Arbitrum lideran adopción'
                 },
-                y: {
-                    grid: { color: GRID_COLOR },
-                    ticks: { color: '#ccc' }
+                {
+                    platform: '🐦 TWITTER',
+                    time: 'En 5 min',
+                    content: '📊 <strong>GRÁFICA:</strong> Correlación BTC vs indices tradicionales en mínimos históricos<br>🎯 ¿Descorrelación real o temporal?<br>📈 Análisis técnico completo...'
                 },
-                y_volume: {
-                    position: 'right',
-                    display: false,
-                    max: Math.max(...tradingData.map(d => d.v)) * 4 // Push volume bars down
+                {
+                    platform: '📱 TELEGRAM',
+                    time: 'En 8 min',
+                    content: '🚨 <strong>BITCOIN ALERT:</strong> Resistencia clave en $68,200<br>📊 Volume profile sugiere breakout inminente<br>🎯 Target técnico: $72,800'
                 }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: { mode: 'index', intersect: false },
+            ];
+
+            const randomContent = feedContents[Math.floor(Math.random() * feedContents.length)];
+            
+            const liveFeed = document.getElementById('liveFeed');
+            if (liveFeed) {
+                liveFeed.innerHTML = `
+                    <div class="feed-item">
+                        <div class="feed-time">${randomContent.platform} - ${randomContent.time}</div>
+                        <div class="feed-content">${randomContent.content}</div>
+                    </div>
+                ` + liveFeed.innerHTML;
+                
+                // Keep only last 3 items
+                const items = liveFeed.querySelectorAll('.feed-item');
+                if (items.length > 3) {
+                    items[items.length - 1].remove();
+                }
             }
         }
-    });
-    
-    // --- GRÁFICAS DE INDICADORES ---
-    const createIndicatorChart = (ctx, data, color, zones = []) => new Chart(ctx, {
-        type: 'line',
-        data: { datasets: [{ data, borderColor: color, borderWidth: 2, pointRadius: 0, tension: 0.4 }] },
-        options: {
-            responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } },
-            plugins: { legend: { display: false }, annotation: { annotations: zones } }
-        }
-    });
 
-    const rsiCtx = document.getElementById('rsiChart').getContext('2d');
-    const rsiChart = createIndicatorChart(rsiCtx, rsiData, NEUTRAL_COLOR);
-    
-    const macdCtx = document.getElementById('macdChart').getContext('2d');
-    const macdChart = new Chart(macdCtx, {
-        type: 'bar',
-        data: {
-            datasets: [{
-                label: 'Histogram',
-                data: macdData.histogram,
-                backgroundColor: macdData.histogram.map(d => d.y > 0 ? 'rgba(0, 255, 136, 0.5)' : 'rgba(255, 68, 68, 0.5)'),
-            }, {
-                type: 'line',
-                label: 'MACD',
-                data: macdData.macdLine,
-                borderColor: NEUTRAL_COLOR,
-                borderWidth: 1.5,
-                pointRadius: 0
-            }, {
-                type: 'line',
-                label: 'Signal',
-                data: macdData.signalLine,
-                borderColor: '#ffc107',
-                borderWidth: 1.5,
-                pointRadius: 0
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
-    });
-    
-    // --- ACTUALIZAR VALORES DE INDICADORES ---
-    const lastRSI = rsiData[rsiData.length-1];
-    document.getElementById('rsi-value').textContent = lastRSI.y.toFixed(2);
-    document.getElementById('rsi-value').className = `value ${lastRSI.y > 70 ? 'bearish' : lastRSI.y < 30 ? 'bullish' : 'neutral'}`;
-
-    const lastMACD = macdData.histogram[macdData.histogram.length - 1];
-    document.getElementById('macd-value').textContent = lastMACD.y.toFixed(2);
-    document.getElementById('macd-value').className = `value ${lastMACD.y > 0 ? 'bullish' : 'bearish'}`;
-
-    document.getElementById('ma50-value').textContent = ma50[ma50.length - 1].y.toFixed(2);
-    const lastBB = {upper: bollingerBands.upper.slice(-1)[0].y, lower: bollingerBands.lower.slice(-1)[0].y};
-    document.getElementById('bb-value').textContent = `${lastBB.lower.toFixed(0)} - ${lastBB.upper.toFixed(0)}`;
-
-
-    // --- LÓGICA DE BACKTESTING ---
-    const equityCurveCtx = document.getElementById('equityCurveChart').getContext('2d');
-    const equityCurveChart = new Chart(equityCurveCtx, {
-        type: 'line',
-        data: { datasets: [{ label: 'Capital', data: [], borderColor: BULL_COLOR, borderWidth: 2, pointRadius: 0 }] },
-        options: { responsive: true, maintainAspectRatio: false, scales: { x: { type: 'time', display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
-    });
-
-    document.getElementById('runBacktestBtn').addEventListener('click', () => {
-        const initialCapital = parseFloat(document.getElementById('capital').value);
-        let capital = initialCapital;
-        const equity = [{x: tradingData[0].x, y: capital}];
-        let trades = 0, wins = 0;
-        let peak = capital;
-        let maxDrawdown = 0;
-        
-        // Simulación simple de cruce de MA
-        const shortMA = calculateMA(tradingData, 10);
-        const longMA = calculateMA(tradingData, 30);
-        let inPosition = false;
-
-        for (let i = 1; i < longMA.length; i++) {
-            const prevShort = shortMA[i-1].y;
-            const prevLong = longMA[i-1].y;
-            const currShort = shortMA[i].y;
-            const currLong = longMA[i].y;
-
-            if (prevShort <= prevLong && currShort > currLong && !inPosition) { // Buy Signal
-                inPosition = true;
-            } else if (prevShort >= prevLong && currShort < currLong && inPosition) { // Sell Signal
-                const entryPrice = equity[equity.length - 1].y;
-                const exitPrice = capital * (tradingData[i + 29].c / tradingData[equity.length + 29].c);
-                if(exitPrice > entryPrice) wins++;
-                capital = exitPrice;
-                trades++;
-                inPosition = false;
-            }
-            equity.push({ x: longMA[i].x, y: capital });
-            if (capital > peak) peak = capital;
-            const drawdown = (peak - capital) / peak;
-            if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 3000);
         }
 
-        const finalReturn = ((capital - initialCapital) / initialCapital) * 100;
-        document.getElementById('backtest-return').textContent = `${finalReturn.toFixed(2)}%`;
-        document.getElementById('backtest-sharpe').textContent = (finalReturn / (maxDrawdown * 100) * 1.5).toFixed(2); // Sharpe simulado
-        document.getElementById('backtest-drawdown').textContent = `-${(maxDrawdown * 100).toFixed(2)}%`;
-        document.getElementById('backtest-winrate').textContent = `${((wins / trades) * 100 || 0).toFixed(2)}%`;
-        
-        equityCurveChart.data.datasets[0].data = equity;
-        equityCurveChart.update();
-    });
-
-    // --- LÓGICA DE CALCULADORA DE RIESGO ---
-    const riskDonutCtx = document.getElementById('riskDonutChart').getContext('2d');
-    const riskDonutChart = new Chart(riskDonutCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Capital en Riesgo', 'Capital Seguro'],
-            datasets: [{ data: [1, 99], backgroundColor: [BEAR_COLOR, BULL_COLOR], borderColor: '#0f0f23' }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-    });
-    
-    const riskInputs = ['risk-capital', 'risk-percent', 'risk-entry', 'risk-sl'];
-    riskInputs.forEach(id => document.getElementById(id).addEventListener('input', updateRiskCalc));
-    
-    function updateRiskCalc() {
-        const capital = parseFloat(document.getElementById('risk-capital').value);
-        const riskPercent = parseFloat(document.getElementById('risk-percent').value);
-        const entry = parseFloat(document.getElementById('risk-entry').value);
-        const sl = parseFloat(document.getElementById('risk-sl').value);
-
-        if(!capital || !riskPercent || !entry || !sl || entry <= sl) return;
-
-        const maxLoss = capital * (riskPercent / 100);
-        const lossPerShare = entry - sl;
-        const positionSize = maxLoss / lossPerShare;
-        
-        document.getElementById('risk-max-loss').textContent = `$${maxLoss.toFixed(2)}`;
-        document.getElementById('risk-position-size').textContent = `${positionSize.toFixed(4)} BTC`;
-
-        riskDonutChart.data.datasets[0].data = [maxLoss, capital - maxLoss];
-        riskDonutChart.update();
-    }
-    updateRiskCalc();
-
-    // --- SIMULACIÓN DE SEÑALES EN VIVO ---
-    const signalsFeed = document.getElementById('signals-feed');
-    setInterval(() => {
-        const isBullish = Math.random() > 0.5;
-        const signal = document.createElement('div');
-        signal.className = `signal-item ${isBullish ? 'bullish' : 'bearish'}`;
-        const now = new Date();
-        signal.innerHTML = `
-            <div class="signal-header">
-                <span class="type">${isBullish ? 'Compra Fuerte (Bullish Engulfing)' : 'Venta (Cruce MA)'}</span>
-                <span class="time">${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}</span>
-            </div>
-            <div class="signal-content">
-                BTC/USDT en timeframe de 1H. ${isBullish ? 'Entrada sugerida: $68,750' : 'Revisar soporte en $68,200'}.
-            </div>
-        `;
-        signalsFeed.prepend(signal);
-        if (signalsFeed.children.length > 10) {
-            signalsFeed.lastChild.remove();
-        }
-    }, 5000);
-});
-</script>
-
+        // Auto-start some features
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('CriptoLobits Dashboard loaded successfully');
+            
+            // Add some initial animation
+            setTimeout(() => {
+                if (!pipelineActive) {
+                    showNotification('💡 Tip: Navega a Automatización para empezar');
+                }
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
